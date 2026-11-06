@@ -1,0 +1,1174 @@
+<meta name="dash-one-writer">
+<style>
+  .ec { display: grid; gap: var(--cds-gap-xl); font-family: var(--font-anthropic-sans); color: var(--color-fg); }
+  .ec-head { display: grid; gap: var(--cds-gap-sm); }
+  .ec-title { margin: 0; font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); text-wrap: balance; }
+  .ec-take { margin: 0; max-width: 72ch; font-size: var(--cds-font-size-body); line-height: 1.65; }
+  .ec .ec-take b { font-weight: var(--cds-font-weight-medium); font-variant-numeric: tabular-nums; }
+  .ec-meta { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+  .ec-nav { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); }
+  .ec-nav button { font: inherit; font-size: var(--cds-font-size-caption); color: var(--color-fg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 999px; padding: var(--cds-pad-xs) var(--cds-pad-sm); cursor: pointer; }
+  .ec-nav button:hover { border-color: var(--color-fg-muted); }
+  .ec-nav button:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+
+  .ec-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); gap: var(--cds-gap-md); }
+  .ec-tile { display: grid; gap: var(--cds-gap-xs); align-content: start; background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md); min-width: 0; }
+  .ec-tile-label { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+  .ec-tile-num { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); line-height: 1.15; font-variant-numeric: tabular-nums; }
+  .ec-tile-chg { font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+  .ec-tile-chg .ec-per, .ec-asof { color: var(--color-fg-muted); }
+  .ec-asof { font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+  .ec-chip { justify-self: start; display: inline-block; font-size: var(--cds-font-size-caption); line-height: 1.5; padding: 0 var(--cds-pad-sm); border: 1px solid currentColor; border-radius: 999px; color: var(--color-fg-muted); white-space: nowrap; }
+  .ec-chip.ec-up { color: var(--color-ok); }
+  .ec-chip.ec-down { color: var(--color-warn); }
+
+  .ec-sec { display: grid; gap: var(--cds-gap-md); scroll-margin-top: var(--cds-gap-md); }
+  .ec-sec-head { display: grid; gap: var(--cds-gap-xs); }
+  .ec-sec-head h2 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
+  .ec-sec-head p { margin: 0; max-width: 72ch; color: var(--color-fg-muted); line-height: 1.6; }
+  .ec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: var(--cds-gap-md); }
+  .ec-card { display: grid; gap: var(--cds-gap-sm); align-content: start; min-width: 0; background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); }
+  .ec-card h3 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
+  .ec-note { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+  .ec-chart { position: relative; min-height: 220px; }
+  .ec-read { margin: 0; padding-top: var(--cds-pad-sm); border-top: 1px solid var(--color-border-line); font-size: var(--cds-font-size-caption); line-height: 1.65; }
+  .ec-read .ec-read-k { color: var(--color-fg-muted); margin-right: var(--cds-gap-xs); }
+
+  .ec-table-wrap { overflow-x: auto; background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); }
+  .ec-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+  .ec-table th, .ec-table td { text-align: left; padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+  .ec-table th { color: var(--color-fg-muted); font-weight: var(--cds-font-weight-medium); }
+  .ec-table td:first-child { white-space: normal; min-width: 10rem; }
+  .ec-table tbody tr:last-child td { border-bottom: 0; }
+
+  .ec-svg { display: block; overflow: visible; }
+  .ec-svg text { font-family: var(--font-anthropic-sans); font-size: var(--cds-font-size-caption); }
+  .ec-tick { fill: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+  .ec-end { fill: var(--color-fg); font-variant-numeric: tabular-nums; }
+  .ec-gridline { stroke: var(--cds-chart-grid); stroke-width: 1; }
+  .ec-axis { stroke: var(--cds-chart-axis); stroke-width: 1; }
+  .ec-ref { stroke: var(--cds-chart-reference); stroke-width: 1; stroke-dasharray: 4 3; }
+  .ec-shade { fill: var(--cds-chart-grid); opacity: .55; }
+  .ec-line { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .ec-rule { stroke: var(--cds-chart-axis); stroke-width: 1; }
+  .ec-tip { position: absolute; top: 4px; left: 0; z-index: 2; pointer-events: none; white-space: nowrap; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); }
+  .ec-tip-date { color: var(--cds-text-secondary); }
+  .ec-tip-row { display: flex; align-items: center; gap: var(--cds-gap-xs); font-variant-numeric: tabular-nums; }
+  .ec-sw { width: 8px; height: 8px; border-radius: 2px; flex: none; }
+  .ec-fail, .ec-empty { display: flex; align-items: center; justify-content: center; gap: var(--cds-gap-xs); min-height: 220px; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+  .ec-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+
+  .ec-guide { display: grid; gap: var(--cds-gap-md); grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); }
+  .ec-guide .ec-card p, .ec-guide .ec-card li { margin: 0; line-height: 1.65; font-size: var(--cds-font-size-body); }
+  .ec-guide ul { margin: 0; padding-left: 1.2em; display: grid; gap: var(--cds-gap-xs); }
+  .ec-chain { display: flex; flex-wrap: wrap; align-items: center; gap: var(--cds-gap-xs); font-size: var(--cds-font-size-caption); }
+  .ec-chain span { border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-xs) var(--cds-pad-sm); }
+  .ec-chain i { font-style: normal; color: var(--color-fg-muted); }
+  .ec-dates { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--cds-gap-xs); font-size: var(--cds-font-size-body); line-height: 1.5; }
+  .ec-dates li { display: grid; grid-template-columns: minmax(7.5rem, auto) 1fr; gap: var(--cds-gap-sm); padding-bottom: var(--cds-gap-xs); border-bottom: 1px solid var(--color-border-line); }
+  .ec-dates li:last-child { border-bottom: 0; }
+  .ec .ec-dates b { font-weight: var(--cds-font-weight-medium); font-variant-numeric: tabular-nums; }
+
+  .ec [data-dash-source-state=empty] { color: transparent; }
+  .ec [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+</style>
+
+<div class="ec">
+  <header class="ec-head" id="top">
+    <h1 class="ec-title">East Cobb 房市宏观看板</h1>
+    <p class="ec-take">过去一周，30 年房贷利率变化 <b data-draw="v" data-source="summary" data-field="change" data-where="key=mort30">—</b>，目前 <b data-draw="v" data-source="summary" data-field="latest" data-where="key=mort30">—</b>。Cobb 在售房源同比 <b data-draw="v" data-source="summary" data-field="change" data-where="key=cobb_active">—</b>，降价房源占比同比 <b data-draw="v" data-source="summary" data-field="change" data-where="key=cobb_cut">—</b>；30068 挂牌价中位数同比 <b data-draw="v" data-source="summary" data-field="change" data-where="key=z_price">—</b>。</p>
+    <p class="ec-meta">日数据和周数据画最近两个月，变化和一周前比，图里的浅色阴影是最近一周；月度数据画最近 24 个月，变化和去年同月比，阴影是最近两个月。Indeed 招聘指数、Georgia 初请失业金和美联储 MBS 持仓画最近一年。每天早上自动更新一次。</p>
+    <nav class="ec-nav" aria-label="跳到">
+      <button type="button" data-go="overview">总览</button>
+      <button type="button" data-go="daily">每天 · 利率</button>
+      <button type="button" data-go="weekly">每周 · 利率和就业</button>
+      <button type="button" data-go="local">每月 · East Cobb 本地</button>
+      <button type="button" data-go="macro">每月 · 宏观</button>
+      <button type="button" data-go="policy">利率与政治</button>
+      <button type="button" data-go="wc">高收入白领就业</button>
+      <button type="button" data-go="guide">怎么读</button>
+    </nav>
+  </header>
+
+  <section class="ec-sec" id="overview">
+    <div class="ec-sec-head">
+      <h2>最该盯的 6 个数</h2>
+      <p>标签是按固定阈值给出的方向判断：变化不大显示"中性"，利率下降、库存减少这类变化显示"偏支撑房价"，反之显示"偏压制房价"。阈值是经验值，不是预测。</p>
+    </div>
+    <div class="ec-tiles">
+      <div class="ec-tile" id="tile-mort30">
+        <div class="ec-tile-label">30 年房贷利率 · 日</div>
+        <div class="ec-tile-num" data-draw="v" data-source="summary" data-field="latest" data-where="key=mort30">—</div>
+        <div class="ec-tile-chg"><span data-draw="v" data-source="summary" data-field="change" data-where="key=mort30">—</span> <span class="ec-per">较一周前</span></div>
+        <div class="ec-asof">截至 <span data-draw="v" data-source="summary" data-field="asof" data-where="key=mort30">—</span></div>
+        <span class="ec-chip" data-draw="chip" data-source="summary" data-field="signal" data-where="key=mort30">—</span>
+      </div>
+      <div class="ec-tile" id="tile-spread">
+        <div class="ec-tile-label">房贷利差（房贷 − 10 年美债）</div>
+        <div class="ec-tile-num" data-draw="v" data-source="summary" data-field="latest" data-where="key=spread">—</div>
+        <div class="ec-tile-chg"><span data-draw="v" data-source="summary" data-field="change" data-where="key=spread">—</span> <span class="ec-per">较一周前</span></div>
+        <div class="ec-asof">截至 <span data-draw="v" data-source="summary" data-field="asof" data-where="key=spread">—</span></div>
+        <span class="ec-chip" data-draw="chip" data-source="summary" data-field="signal" data-where="key=spread">—</span>
+      </div>
+      <div class="ec-tile" id="tile-icsa">
+        <div class="ec-tile-label">初请失业金 · 周</div>
+        <div class="ec-tile-num" data-draw="v" data-source="summary" data-field="latest" data-where="key=icsa">—</div>
+        <div class="ec-tile-chg"><span data-draw="v" data-source="summary" data-field="change" data-where="key=icsa">—</span> <span class="ec-per">较一周前</span></div>
+        <div class="ec-asof">截至 <span data-draw="v" data-source="summary" data-field="asof" data-where="key=icsa">—</span></div>
+        <span class="ec-chip" data-draw="chip" data-source="summary" data-field="signal" data-where="key=icsa">—</span>
+      </div>
+      <div class="ec-tile" id="tile-cobb-active">
+        <div class="ec-tile-label">Cobb 在售房源</div>
+        <div class="ec-tile-num" data-draw="v" data-source="summary" data-field="latest" data-where="key=cobb_active">—</div>
+        <div class="ec-tile-chg"><span data-draw="v" data-source="summary" data-field="change" data-where="key=cobb_active">—</span> <span class="ec-per">同比</span></div>
+        <div class="ec-asof">截至 <span data-draw="v" data-source="summary" data-field="asof" data-where="key=cobb_active">—</span></div>
+        <span class="ec-chip" data-draw="chip" data-source="summary" data-field="signal" data-where="key=cobb_active">—</span>
+      </div>
+      <div class="ec-tile" id="tile-cobb-cut">
+        <div class="ec-tile-label">Cobb 降价房源占比</div>
+        <div class="ec-tile-num" data-draw="v" data-source="summary" data-field="latest" data-where="key=cobb_cut">—</div>
+        <div class="ec-tile-chg"><span data-draw="v" data-source="summary" data-field="change" data-where="key=cobb_cut">—</span> <span class="ec-per">同比</span></div>
+        <div class="ec-asof">截至 <span data-draw="v" data-source="summary" data-field="asof" data-where="key=cobb_cut">—</span></div>
+        <span class="ec-chip" data-draw="chip" data-source="summary" data-field="signal" data-where="key=cobb_cut">—</span>
+      </div>
+      <div class="ec-tile" id="tile-z-price">
+        <div class="ec-tile-label">30068 挂牌价中位数</div>
+        <div class="ec-tile-num" data-draw="v" data-source="summary" data-field="latest" data-where="key=z_price">—</div>
+        <div class="ec-tile-chg"><span data-draw="v" data-source="summary" data-field="change" data-where="key=z_price">—</span> <span class="ec-per">同比</span></div>
+        <div class="ec-asof">截至 <span data-draw="v" data-source="summary" data-field="asof" data-where="key=z_price">—</span></div>
+        <span class="ec-chip" data-draw="chip" data-source="summary" data-field="signal" data-where="key=z_price">—</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="ec-sec" id="daily">
+    <div class="ec-sec-head">
+      <h2>每天 · 利率和市场情绪（最近两个月）</h2>
+      <p>房贷利率是影响 East Cobb 房价最快的渠道，但要 6–12 个月才在成交价上体现。这里看方向，不看单日波动。</p>
+    </div>
+    <div class="ec-table-wrap">
+      <table class="ec-table" id="tbl-daily" data-source="summary" data-row-key="key">
+        <thead><tr><th data-field="name">指标</th><th data-field="latest">最新</th><th data-field="asof">截至</th><th data-field="change">变化</th><th data-field="period">比较</th><th data-field="signal">对房价</th></tr></thead>
+        <tbody data-draw="tbl" data-group="daily"></tbody>
+      </table>
+    </div>
+    <div class="ec-grid">
+      <div class="ec-card" id="card-rates">
+        <h3>房贷利率与美债</h3>
+        <p class="ec-note">30 年固定房贷（Optimal Blue 日数据）、10 年和 2 年期美债、联邦基金利率，单位 %</p>
+        <div class="ec-chart" data-draw="chart" data-chart="rates" data-source="fred_daily"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>10 年美债是房贷利率的锚；2 年美债反映市场对 Fed 未来一两年的预期，可以代替 FedWatch 看降息预期。房贷利率每降 1 个百分点，同样的月供大约能多借 10%。</p>
+      </div>
+      <div class="ec-card" id="card-spread">
+        <h3>房贷利差</h3>
+        <p class="ec-note">30 年房贷利率减同日 10 年美债，单位：百分点</p>
+        <div class="ec-chart" data-draw="chart" data-chart="spread" data-source="spread"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>历史上正常水平约 1.7 个百分点，2023 年一度接近 3。利差收窄时，即使美债不动，房贷利率也会下降。利差主要受房贷抵押债券（MBS）的需求和利率波动影响。</p>
+      </div>
+      <div class="ec-card" id="card-sp500">
+        <h3>标普 500</h3>
+        <p class="ec-note">每日收盘点位</p>
+        <div class="ec-chart" data-draw="chart" data-chart="sp500" data-source="fred_daily"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>East Cobb 买家收入较高，很多首付来自股票和 401k。股市持续上涨会推高好学区房的需求，大跌则让买家观望。</p>
+      </div>
+      <div class="ec-card" id="card-hy">
+        <h3>高收益债利差</h3>
+        <p class="ec-note">ICE BofA 美国高收益债期权调整利差，单位 %</p>
+        <div class="ec-chart" data-draw="chart" data-chart="hy" data-source="fred_daily"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>衡量金融市场的风险情绪。几周内快速走阔（比如升 1 个百分点以上）通常预示经济放缓和裁员，会先打击买家信心，再体现到成交上。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="ec-sec" id="weekly">
+    <div class="ec-sec-head">
+      <h2>每周 · 利率和就业（最近两个月）</h2>
+      <p>Freddie Mac 利率和失业金数据都在每周四公布。就业转弱是房价下跌最常见的起点，失业金数据是最早能看到的信号。</p>
+    </div>
+    <div class="ec-table-wrap">
+      <table class="ec-table" id="tbl-weekly" data-source="summary" data-row-key="key">
+        <thead><tr><th data-field="name">指标</th><th data-field="latest">最新</th><th data-field="asof">截至</th><th data-field="change">变化</th><th data-field="period">比较</th><th data-field="signal">对房价</th></tr></thead>
+        <tbody data-draw="tbl" data-group="weekly"></tbody>
+      </table>
+    </div>
+    <div class="ec-grid">
+      <div class="ec-card" id="card-fm">
+        <h3>Freddie Mac 房贷利率</h3>
+        <p class="ec-note">30 年和 15 年固定，每周四公布，单位 %</p>
+        <div class="ec-chart" data-draw="chart" data-chart="fm" data-source="fred_weekly"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>比日数据晚几天，但口径稳定，新闻里引用的通常是这个数。方向应该和上面的日利率一致。</p>
+      </div>
+      <div class="ec-card" id="card-icsa">
+        <h3>首次申请失业金人数</h3>
+        <p class="ec-note">全国，每周，单位：人</p>
+        <div class="ec-chart" data-draw="chart" data-chart="icsa" data-source="fred_weekly"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>看趋势，不看单周：连续几周上升比一周跳高更重要。全国性的裁员通常几个月内就会传到 Atlanta。</p>
+      </div>
+      <div class="ec-card" id="card-ccsa">
+        <h3>持续申领失业金人数</h3>
+        <p class="ec-note">全国，每周，单位：人</p>
+        <div class="ec-chart" data-draw="chart" data-chart="ccsa" data-source="fred_weekly"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>反映失业的人找新工作有多难。持续上升说明找工作变慢，买家会更谨慎，高价房最先受影响。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="ec-sec" id="local">
+    <div class="ec-sec-head">
+      <h2>每月 · East Cobb 本地（最近 24 个月）</h2>
+      <p>这部分最直接决定 East Cobb 的价格方向。在售库存、上市天数和降价比例通常比成交价早几个月变化。有季节性，所以和去年同月比。</p>
+    </div>
+    <div class="ec-table-wrap">
+      <table class="ec-table" id="tbl-local" data-source="summary" data-row-key="key">
+        <thead><tr><th data-field="name">指标</th><th data-field="latest">最新</th><th data-field="asof">截至</th><th data-field="change">变化</th><th data-field="period">比较</th><th data-field="signal">对房价</th></tr></thead>
+        <tbody data-draw="tbl" data-group="local"></tbody>
+      </table>
+    </div>
+    <div class="ec-grid">
+      <div class="ec-card" id="card-cobb-list">
+        <h3>Cobb 在售与新挂牌房源</h3>
+        <p class="ec-note">Realtor.com，Cobb County 全县，单位：套</p>
+        <div class="ec-chart" data-draw="chart" data-chart="cobbList" data-source="fred_monthly"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>在售房源持续高于去年同期，说明供给在积累，卖家议价能力下降。新挂牌增加而在售不涨，说明房子还卖得掉。</p>
+      </div>
+      <div class="ec-card" id="card-cobb-dom">
+        <h3>Cobb 上市天数中位数</h3>
+        <p class="ec-note">Realtor.com，单位：天</p>
+        <div class="ec-chart" data-draw="chart" data-chart="cobbDom" data-source="fred_monthly"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>天数变长是市场降温最早的信号之一。冬天本来就比春天长，所以要和去年同月比。</p>
+      </div>
+      <div class="ec-card" id="card-cobb-cut">
+        <h3>Cobb 降价房源占比</h3>
+        <p class="ec-note">降价房源数 ÷ 在售房源数，单位 %</p>
+        <div class="ec-chart" data-draw="chart" data-chart="cobbCut" data-source="monthly_derived"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>卖家主动降价，说明挂牌价超过了买家愿意出的价。同比上升 3 个百分点以上值得注意。</p>
+      </div>
+      <div class="ec-card" id="card-zip-price">
+        <h3>挂牌价中位数：30068 / 30062 / 30066</h3>
+        <p class="ec-note">Realtor.com，单位：美元</p>
+        <div class="ec-chart" data-draw="chart" data-chart="zipPrice" data-source="zip_realtor"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>挂牌价是卖家的期望，成交价通常略低。它也受当月挂出的房子构成影响（大房多就偏高），看几个月的趋势比看单月可靠。</p>
+      </div>
+      <div class="ec-card" id="card-zip-active">
+        <h3>在售房源：30068 / 30062 / 30066</h3>
+        <p class="ec-note">Realtor.com，单位：套</p>
+        <div class="ec-chart" data-draw="chart" data-chart="zipActive" data-source="zip_realtor"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>30068 的库存一向很少，几十套的变化就很明显。库存上升而挂牌价持平，往往是价格松动的前兆。</p>
+      </div>
+      <div class="ec-card" id="card-zil-yoy">
+        <h3>30068 房价指数同比：独栋 vs 联排/公寓</h3>
+        <p class="ec-note">Zillow ZHVI，相对 12 个月前的涨跌，%</p>
+        <div class="ec-chart" data-draw="chart" data-chart="zilYoy" data-source="zillow_yoy"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>联排的波动比独栋大：涨时涨得多，跌时跌得多。两条线的差距就是换房成本的变化：独栋涨得比联排快，卖联排换独栋就更贵。</p>
+      </div>
+      <div class="ec-card" id="card-zil-top">
+        <h3>30068 房价指数：高价位段 vs 中间价位独栋</h3>
+        <p class="ec-note">Zillow ZHVI，美元。高价位段是 30068 所有房子里价值最高的三分之一（独栋和联排一起算）；中间价位是独栋的中间三分之一</p>
+        <div class="ec-chart" data-draw="chart" data-chart="zilTop" data-source="zillow_zip"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>100 万以上的房子落在高价位段。高价位段的买家更依赖 jumbo 贷款和股票财富，对利率和白领就业更敏感，涨跌往往比中间价位更大。两条线拉开或收窄，说明高端和中端在分化。</p>
+      </div>
+      <div class="ec-card" id="card-zori">
+        <h3>租金指数：30068 / 30062 / 30066</h3>
+        <p class="ec-note">Zillow ZORI，典型月租金，美元</p>
+        <div class="ec-chart" data-draw="chart" data-chart="zori" data-source="zillow_zip"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>如果把现在的房子出租，这条线决定现金流。Atlanta 新公寓供应多的时候，租金涨幅会被压住。</p>
+      </div>
+      <div class="ec-card" id="card-cs">
+        <h3>Case-Shiller Atlanta 房价指数</h3>
+        <p class="ec-note">季调，2000 年 1 月 = 100，比其他数据晚约 2 个月</p>
+        <div class="ec-chart" data-draw="chart" data-chart="cs" data-source="fred_monthly"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>用同一套房子前后两次成交价计算，是最权威的房价指数，但滞后，适合确认趋势，不适合预警。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="ec-sec" id="macro">
+    <div class="ec-sec-head">
+      <h2>每月 · 宏观（最近 24 个月）</h2>
+      <p>就业决定需求的底，通胀决定 Fed 和利率的方向，新房供给决定建商会不会降价抢买家。</p>
+    </div>
+    <div class="ec-table-wrap">
+      <table class="ec-table" id="tbl-macro" data-source="summary" data-row-key="key">
+        <thead><tr><th data-field="name">指标</th><th data-field="latest">最新</th><th data-field="asof">截至</th><th data-field="change">变化</th><th data-field="period">比较</th><th data-field="signal">对房价</th></tr></thead>
+        <tbody data-draw="tbl" data-group="macro"></tbody>
+      </table>
+    </div>
+    <div class="ec-grid">
+      <div class="ec-card" id="card-ur">
+        <h3>失业率：美国 / Atlanta / Cobb</h3>
+        <p class="ec-note">%；Atlanta 和 Cobb 未季调</p>
+        <div class="ec-chart" data-draw="chart" data-chart="ur" data-source="fred_monthly"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>本地就业是房价的底。Cobb 的失业率一向低于全国；如果比去年同期高出 0.5 个百分点以上，需求会明显变弱。</p>
+      </div>
+      <div class="ec-card" id="card-pay">
+        <h3>非农新增就业</h3>
+        <p class="ec-note">全国，每月新增，千人</p>
+        <div class="ec-chart" data-draw="chart" data-chart="pay" data-source="monthly_derived"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>每月第一个周五公布。连续几个月很弱，说明经济在放缓，Fed 更可能降息，利率会往下走；但同时买家收入预期也变差。</p>
+      </div>
+      <div class="ec-card" id="card-cpi">
+        <h3>CPI 同比</h3>
+        <p class="ec-note">全国，%；虚线是 Fed 的 2% 目标</p>
+        <div class="ec-chart" data-draw="chart" data-chart="cpi" data-source="monthly_derived"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>通胀回到 2% 附近，Fed 才有空间降息，房贷利率才有持续下降的基础。通胀反弹则利率会维持高位。</p>
+      </div>
+      <div class="ec-card" id="card-starts">
+        <h3>新屋开工与建筑许可</h3>
+        <p class="ec-note">全国，季调年化，千套</p>
+        <div class="ec-chart" data-draw="chart" data-chart="starts" data-source="fred_monthly"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>许可领先开工几个月。新房供给多时，建商用降价和补贴利率抢买家，压力最先落在联排和入门价位的二手房上。</p>
+      </div>
+      <div class="ec-card" id="card-msacsr">
+        <h3>新房库存月数</h3>
+        <p class="ec-note">全国，按当前销售速度卖完新房库存需要的月数；虚线是 6 个月</p>
+        <div class="ec-chart" data-draw="chart" data-chart="msacsr" data-source="fred_monthly"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>超过 6 个月说明新房偏多，建商让利会更积极。East Cobb 本身新房很少，但 Cherokee、Paulding 一带的新房会分流买家。</p>
+      </div>
+      <div class="ec-card" id="card-exhs">
+        <h3>成屋销售</h3>
+        <p class="ec-note">全国，季调年化，套</p>
+        <div class="ec-chart" data-draw="chart" data-chart="exhs" data-source="fred_monthly"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>成交量比价格先变。量缩价稳多半是锁定效应（业主舍不得低利率不卖），量价一起跌才是真正转弱。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="ec-sec" id="policy">
+    <div class="ec-sec-head">
+      <h2>利率与政治</h2>
+      <p>选举和财政主要通过长端美债影响房贷利率：多发国债推高期限溢价和 30 年美债，通胀预期上升让 Fed 更可能加息。这一节把 10 年美债拆开，看是哪一块在动。日数据画最近两个月、和一周前比；月度数据画最近 24 个月。</p>
+    </div>
+    <div class="ec-table-wrap">
+      <table class="ec-table" id="tbl-policy" data-source="summary" data-row-key="key">
+        <thead><tr><th data-field="name">指标</th><th data-field="latest">最新</th><th data-field="asof">截至</th><th data-field="change">变化</th><th data-field="period">比较</th><th data-field="signal">对房价</th></tr></thead>
+        <tbody data-draw="tbl" data-group="policy"></tbody>
+      </table>
+    </div>
+    <div class="ec-card" id="card-nowcast">
+      <h3>通胀实时预测（克利夫兰联储）</h3>
+      <p class="ec-note">左边是还没公布的最近一个月的预测，每个工作日更新，%；右边是上一次公布的实际值，括号里是公布前模型的最后一次预测。预测更新到 <b data-draw="v" data-source="nowcast_table" data-field="asof" data-where="id=core_cpi">—</b>。</p>
+      <div class="ec-table-wrap">
+        <table class="ec-table" id="tbl-nowcast" data-source="nowcast_table" data-row-key="id">
+          <thead><tr><th data-field="name">指标</th><th data-field="month">预测月份</th><th data-field="mom">预测环比</th><th data-field="yoy">预测同比</th><th data-field="last_month">上次公布</th><th data-field="last_mom">实际环比（模型预测）</th><th data-field="last_yoy">实际同比</th></tr></thead>
+          <tbody data-draw="nctbl"></tbody>
+        </table>
+      </div>
+      <p class="ec-read"><span class="ec-read-k">怎么读</span>Fed 的 2% 目标按 PCE 算，CPI 早两周公布，市场先看 CPI。整体通胀主要随油价和汽油价格变，模型跟得比较准；核心通胀模型几乎只看过去的趋势，实际值常常偏离，比一比括号里的预测和实际，就能看出模型最近是偏高还是偏低。核心环比 0.3% 以上算偏热，Fed 更可能加息，对房价偏压制。</p>
+    </div>
+    <div class="ec-grid">
+      <div class="ec-card" id="card-dates">
+        <h3>关键日期</h3>
+        <ul class="ec-dates">
+          <li><b>11 月 3 日</b>中期选举</li>
+          <li><b>11 月 6 日</b>10 月就业报告</li>
+          <li><b>11 月 10 日</b>10 月 CPI（12 月议息前最后一份 CPI）</li>
+          <li><b>11 月 25 日</b>10 月 PCE（Fed 的 2% 目标按它算）</li>
+          <li><b>12 月 9 日</b>FOMC 利率决议</li>
+          <li><b>12 月 10 日</b>11 月 CPI（议息后一天）</li>
+          <li><b>12 月 11 日</b>政府临时拨款到期，可能关门</li>
+          <li><b>约 2027 年 5 月</b>触及债务上限</li>
+        </ul>
+        <p class="ec-note">按 BLS、BEA 和 Fed 的公开日程整理，数据都在美东时间早上 8:30 公布，日期可能调整。</p>
+      </div>
+      <div class="ec-card" id="card-long">
+        <h3>长端美债：10 年 / 30 年</h3>
+        <p class="ec-note">%；虚线是 5% 和 6%，常被认为是中小银行开始承压的水平</p>
+        <div class="ec-chart" data-draw="chart" data-chart="long" data-source="fred_daily fred_policy"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>30 年美债对国债发行量和财政赤字最敏感。选举后如果出现更多举债的计划，通常先体现在 30 年，再带动 10 年和房贷利率。</p>
+      </div>
+      <div class="ec-card" id="card-decomp">
+        <h3>10 年美债拆解：实际利率 + 通胀预期</h3>
+        <p class="ec-note">10 年名义收益率 ≈ 10 年 TIPS 实际利率 + 10 年通胀预期（breakeven），%</p>
+        <div class="ec-chart" data-draw="chart" data-chart="decomp" data-source="fred_daily fred_policy"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>上涨主要来自实际利率，说明市场要求更高的真实回报（Fed 偏紧、国债发得多），对房价的压力最直接；主要来自通胀预期，说明市场在担心通胀，这对房子这类实物资产有一定支撑，但同样会推高利率。</p>
+      </div>
+      <div class="ec-card" id="card-tp">
+        <h3>10 年期限溢价</h3>
+        <p class="ec-note">Kim-Wright 模型估计（Fed 理事会），比市场数据晚约一周，%</p>
+        <div class="ec-chart" data-draw="chart" data-chart="tp" data-source="fred_policy"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>投资者为长期持有国债要求的额外补偿。赤字扩大、国债供给增加、政策不确定性上升时会走高。它多 0.5 个百分点，房贷利率大致也跟着多 0.5。</p>
+      </div>
+      <div class="ec-card" id="card-infl">
+        <h3>通胀预期：10 年 breakeven / 5y5y</h3>
+        <p class="ec-note">10 年通胀预期和 5 年后的 5 年远期通胀预期，%</p>
+        <div class="ec-chart" data-draw="chart" data-chart="infl" data-source="fred_policy"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>5y5y 是看 Fed 信誉最好的指标：如果市场担心 Fed 受政治压力、不再坚持 2%，它会先往上走。短期的油价和 CPI 波动通常不太影响它。</p>
+      </div>
+      <div class="ec-card" id="card-hike">
+        <h3>下次会议加息定价</h3>
+        <p class="ec-note">3 个月国库券减联邦基金有效利率，百分点；虚线是 0</p>
+        <div class="ec-chart" data-draw="chart" data-chart="hike" data-source="policy_derived"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>3 个月国库券覆盖未来一两次 FOMC 会议。比联邦基金利率高出约 0.25 个百分点，大致等于市场认为会再加息一次；低于 0 则是在定价降息。</p>
+      </div>
+      <div class="ec-card" id="card-jumbo">
+        <h3>Jumbo 与普通 30 年房贷利率</h3>
+        <p class="ec-note">Optimal Blue 日数据，%</p>
+        <div class="ec-chart" data-draw="chart" data-chart="jumbo" data-source="fred_daily fred_policy"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>East Cobb 100 万以上的房子贷款大多超过普通贷款上限，要用 jumbo 贷款。jumbo 利率由银行自己定价，有时比普通贷款高，有时更低，波动也更大。</p>
+      </div>
+      <div class="ec-card" id="card-epu">
+        <h3>经济政策不确定性指数</h3>
+        <p class="ec-note">根据报纸新闻编制的日度指数（Baker、Bloom、Davis），7 日平均</p>
+        <div class="ec-chart" data-draw="chart" data-chart="epu" data-source="policy_derived"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>选举、政府关门、关税、债务上限这类新闻都会推高它。指数飙升时买卖双方都更倾向观望，成交量会下降。</p>
+      </div>
+      <div class="ec-card" id="card-vix">
+        <h3>VIX 波动率指数</h3>
+        <p class="ec-note">标普 500 期权的隐含波动率，点；虚线是 20 和 30</p>
+        <div class="ec-chart" data-draw="chart" data-chart="vix" data-source="fred_policy"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>20 以下算平静，30 以上算恐慌。VIX 飙升通常伴随股市下跌，对靠股票财富付首付的高价位买家影响最大。</p>
+      </div>
+      <div class="ec-card" id="card-usd">
+        <h3>美元指数</h3>
+        <p class="ec-note">Fed 贸易加权广义美元指数，2006 年 1 月 = 100，每周公布</p>
+        <div class="ec-chart" data-draw="chart" data-chart="usd" data-source="fred_policy"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>美元走强通常是因为美国利率相对更高。如果美债收益率上升而美元反而下跌，说明市场在担心美国财政，这是更危险的组合。</p>
+      </div>
+      <div class="ec-card" id="card-mbs">
+        <h3>美联储持有的 MBS</h3>
+        <p class="ec-note">每周三的持仓，万亿美元，最近一年</p>
+        <div class="ec-chart" data-draw="chart" data-chart="mbs" data-source="fred_policy"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>美联储在缩表，房贷抵押债券（MBS）只出不进，少了一个大买家，房贷利差就更难收窄。如果从被动到期改为主动卖出，这条线会下降得明显更快。</p>
+      </div>
+      <div class="ec-card" id="card-core">
+        <h3>核心 CPI 与整体 CPI 同比</h3>
+        <p class="ec-note">全国，%；核心 CPI 不含能源和食品；虚线是 Fed 的 2% 目标</p>
+        <div class="ec-chart" data-draw="chart" data-chart="core" data-source="monthly_derived"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>核心 CPI 更接近 Fed 盯的趋势通胀。整体高、核心低，说明主要是油价在推；核心也往上走，Fed 才会真正担心，加息的可能就更大。</p>
+      </div>
+      <div class="ec-card" id="card-deficit">
+        <h3>联邦财政收支（滚动 12 个月）</h3>
+        <p class="ec-note">最近 12 个月的财政盈余合计，负数为赤字，万亿美元</p>
+        <div class="ec-chart" data-draw="chart" data-chart="deficit" data-source="monthly_derived"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>赤字越大，财政部要发的国债越多，长端利率和期限溢价越容易往上走。要国会通过新的减税或开支法案，这条线才会大幅变化。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="ec-sec" id="wc">
+    <div class="ec-sec-head">
+      <h2>高收入白领就业</h2>
+      <p>East Cobb 100 万以上的买家多是专业人士、管理层、科技和金融从业者。他们被裁时常有遣散费，不一定马上申请失业金，所以这里看学历和职业分类的失业率、敢不敢跳槽、失业多久，以及受 AI 冲击的职位招聘。Microsoft 等公司的自愿离职多在 12 月 31 日生效，要到 1 月的数据（2 月公布）才会体现。月度数据画最近 24 个月、和去年同月比；Indeed 招聘指数和 Georgia 失业金画最近一年、和去年同期比。</p>
+    </div>
+    <div class="ec-table-wrap">
+      <table class="ec-table" id="tbl-wc" data-source="summary" data-row-key="key">
+        <thead><tr><th data-field="name">指标</th><th data-field="latest">最新</th><th data-field="asof">截至</th><th data-field="change">变化</th><th data-field="period">比较</th><th data-field="signal">对房价</th></tr></thead>
+        <tbody data-draw="tbl" data-group="wc"></tbody>
+      </table>
+    </div>
+    <div class="ec-table-wrap">
+      <table class="ec-table" id="tbl-indeed" data-source="summary" data-row-key="key">
+        <thead><tr><th data-field="name">Indeed 招聘指数（2020 年 2 月 = 100）</th><th data-field="latest">最新</th><th data-field="asof">截至</th><th data-field="change">变化</th><th data-field="period">比较</th><th data-field="signal">对房价</th></tr></thead>
+        <tbody data-draw="tbl" data-group="indeed"></tbody>
+      </table>
+    </div>
+    <div class="ec-grid">
+      <div class="ec-card" id="card-wc-ur">
+        <h3>白领失业率</h3>
+        <p class="ec-note">%；本科以上（25 岁以上，季调），管理、商业和金融职业与专业类职业（未季调），对比全美失业率</p>
+        <div class="ec-chart" data-draw="chart" data-chart="wcUr" data-source="fred_monthly fred_whitecollar"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>按职业分的失业率没有季节调整、样本小，单月会跳，要和去年同月比，或者看几个月的趋势。白领失业率比全体低得多，上升 0.3 个百分点就值得注意。</p>
+      </div>
+      <div class="ec-card" id="card-wc-dur">
+        <h3>失业持续时间中位数</h3>
+        <p class="ec-note">全国，单位：周</p>
+        <div class="ec-chart" data-draw="chart" data-chart="wcDur" data-source="fred_whitecollar"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>白领转弱往往不是先出现在失业金里，而是表现为找工作更久。持续时间变长，说明一旦失业就很难接上下一份工作。</p>
+      </div>
+      <div class="ec-card" id="card-wc-long">
+        <h3>失业 27 周以上人数</h3>
+        <p class="ec-note">全国，单位：百万人</p>
+        <div class="ec-chart" data-draw="chart" data-chart="wcLong" data-source="fred_whitecollar"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>长期失业人数增加，说明就业市场在变硬。它通常比失业率更早反映出找工作的困难。</p>
+      </div>
+      <div class="ec-card" id="card-wc-quits">
+        <h3>主动离职率</h3>
+        <p class="ec-note">JOLTS，占就业人数的 %；专业和商业服务（季调），信息业（未季调）</p>
+        <div class="ec-chart" data-draw="chart" data-chart="wcQuits" data-source="fred_whitecollar"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>离职率低说明人们不敢跳槽、对工作没有安全感。这样的人也不太愿意换城市、背更大的房贷，高价房的买家就少。</p>
+      </div>
+      <div class="ec-card" id="card-wc-open">
+        <h3>职位空缺</h3>
+        <p class="ec-note">JOLTS，专业和商业服务（季调）与信息业（未季调），千个</p>
+        <div class="ec-chart" data-draw="chart" data-chart="wcOpen" data-source="fred_whitecollar"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>职位空缺比招聘广告更接近真实需求。它在下降而失业率还没上升，往往是就业转弱的早期阶段。</p>
+      </div>
+      <div class="ec-card" id="card-wc-emp">
+        <h3>白领行业就业人数同比（全国）</h3>
+        <p class="ec-note">相对 12 个月前的涨跌，%</p>
+        <div class="ec-chart" data-draw="chart" data-chart="wcEmp" data-source="wc_yoy"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>信息业、金融业和电脑系统设计是受 AI 影响最大的行业。同比转负并持续，说明这些行业在实际减人，而不只是少招人。</p>
+      </div>
+      <div class="ec-card" id="card-wc-atl">
+        <h3>Atlanta 白领行业就业人数同比</h3>
+        <p class="ec-note">Atlanta 都会区，相对 12 个月前的涨跌，%</p>
+        <div class="ec-chart" data-draw="chart" data-chart="wcAtl" data-source="wc_yoy"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>这些是 East Cobb 买家最主要的雇主行业。都会区数据样本小、修订多，看方向不看单月。</p>
+      </div>
+      <div class="ec-card" id="card-in-ai">
+        <h3>Indeed 招聘指数：受 AI 冲击较大的职位</h3>
+        <p class="ec-note">2020 年 2 月 = 100，最近一年；虚线是 100</p>
+        <div class="ec-chart" data-draw="chart" data-chart="inAi" data-source="indeed_postings"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>软件开发、IT 运维、数据和市场营销的招聘远低于疫情前。Indeed 统计的是挂出的招聘广告，不是实际录用，只能看方向。</p>
+      </div>
+      <div class="ec-card" id="card-in-safe">
+        <h3>Indeed 招聘指数：金融、会计、项目管理、法律、医生</h3>
+        <p class="ec-note">2020 年 2 月 = 100，最近一年；虚线是 100</p>
+        <div class="ec-chart" data-draw="chart" data-chart="inSafe" data-source="indeed_postings"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>这些职位较难被 AI 替代，招聘大多高于疫情前。如果它们也开始往下走，说明不只是 AI，而是整个白领就业在转弱。</p>
+      </div>
+      <div class="ec-card" id="card-in-ga">
+        <h3>Indeed 招聘指数：Georgia vs 全国</h3>
+        <p class="ec-note">全部职位，2020 年 2 月 = 100，最近一年；虚线是 100</p>
+        <div class="ec-chart" data-draw="chart" data-chart="inGa" data-source="indeed_postings"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>Georgia 的招聘一直比全国强，这是 Atlanta 房价比很多城市稳的原因之一。两条线的差距缩小要留意。</p>
+      </div>
+      <div class="ec-card" id="card-ga-claims">
+        <h3>Georgia 初请失业金</h3>
+        <p class="ec-note">每周，未季调，人，最近一年</p>
+        <div class="ec-chart" data-draw="chart" data-chart="gaClaims" data-source="fred_whitecollar"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>未季调，年初和 7 月会有季节性跳高，所以和去年同期比。有遣散费的人可能晚几个月才申请，大公司裁员在这里的体现会滞后。</p>
+      </div>
+      <div class="ec-card" id="card-nasdaq">
+        <h3>纳斯达克综合指数</h3>
+        <p class="ec-note">每日收盘点位</p>
+        <div class="ec-chart" data-draw="chart" data-chart="nasdaq" data-source="fred_daily"></div>
+        <p class="ec-read"><span class="ec-read-k">怎么读</span>科技股是很多白领买家的主要财富来源（RSU、401k）。纳斯达克大涨能部分抵消裁员的担忧，大跌则两头打击。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="ec-sec" id="guide">
+    <div class="ec-sec-head">
+      <h2>怎么读这个看板</h2>
+    </div>
+    <div class="ec-guide">
+      <div class="ec-card">
+        <h3>传导链</h3>
+        <div class="ec-chain"><span>Fed 预期</span><i>→</i><span>10 年美债</span><i>→</i><span>30 年房贷利率</span><i>→</i><span>买家购买力</span><i>→</i><span>库存、上市天数、降价</span><i>→</i><span>成交价</span></div>
+        <p>越往右越慢。利率每天都在变，成交价通常要晚 6–12 个月才反应。所以上面几节是预警，本地库存和降价比例是确认，房价指数是结果。</p>
+      </div>
+      <div class="ec-card">
+        <h3>East Cobb 的特殊之处</h3>
+        <ul>
+          <li>锁定效应：多数业主的房贷利率很低，不愿卖。利率上升时通常是成交量下降，价格很难大跌；利率下降时买家和卖家同时出来，价格也未必大涨。所以库存比价格更值得盯。</li>
+          <li>学区需求稳定（Walton、Wheeler、Pope、Lassiter），高收入买家对就业和股市比对利率更敏感。</li>
+          <li>卖旧买新在同一个市场里，绝对涨跌没那么重要，关键是联排和独栋之间的相对强弱。</li>
+        </ul>
+      </div>
+      <div class="ec-card">
+        <h3>"对房价"标签怎么算</h3>
+        <ul>
+          <li>日数据和周数据：和一周前比；月度数据：和去年同月比（CPI 是和上个月的同比读数比）。</li>
+          <li>利率、利差、库存、上市天数、降价比例、失业率上升，算"偏压制房价"；股市和成屋销售上升，算"偏支撑房价"；变化小于阈值算"中性"。</li>
+          <li>房价和租金本身只标"上涨 / 下跌 / 基本持平"。</li>
+          <li>Indeed 招聘指数和 Georgia 初请失业金虽然是日、周数据，但有季节性，所以和去年同期比。</li>
+          <li>克利夫兰联储的核心通胀预测上调，算"偏压制房价"（Fed 更可能加息），和一周前的预测比。</li>
+          <li>离职率、职位空缺、白领行业就业人数、纳斯达克和美联储 MBS 持仓上升，算"偏支撑房价"；通胀预期和美元对房价两个方向的影响都有，只标"上涨 / 下跌"。</li>
+        </ul>
+      </div>
+      <div class="ec-card">
+        <h3>没有包含的数据</h3>
+        <ul>
+          <li>MBA 购房贷款申请指数：需要付费订阅，可以看每周三的新闻报道。</li>
+          <li>CME FedWatch 降息概率：没有公开数据接口，用 2 年期美债代替。</li>
+          <li>Redfin 的 zip 成交数据（成交价/挂牌价比、库存月数、分联排和独栋）：Redfin 的公开数据下载目前拒绝访问，暂用 Realtor.com 的挂牌数据和 Zillow 的指数代替。</li>
+          <li>Kalshi、Polymarket 的选举赔率和国债拍卖结果：没有接入。选举赔率在 11 月 3 日之后意义不大。</li>
+          <li>Challenger 裁员报告（含归因于 AI 的裁员）和 Georgia WARN 裁员预告：没有可直接下载的数据，要看每月初的新闻。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  dash.calc('spread', {
+    title: '房贷利差',
+    description: 'Optimal Blue 30 年固定房贷利率减去同一天的 10 年期美债收益率，单位：百分点。',
+    inputs: ['fred_daily'],
+    fn: (fred_daily) => {
+      const t10 = new Map(fred_daily.filter((r) => r.series === 'DGS10').map((r) => [r.date, +r.value]));
+      return fred_daily
+        .filter((r) => r.series === 'OBMMIC30YF' && t10.has(r.date))
+        .map((r) => ({date: r.date, series: 'spread', value: Math.round((r.value - t10.get(r.date)) * 1000) / 1000}))
+        .sort((a, b) => (a.date < b.date ? -1 : 1));
+    },
+  });
+
+  dash.calc('monthly_derived', {
+    title: '月度换算指标',
+    description: 'CPI 和核心 CPI 同比（%）、非农就业每月新增（千人）、Cobb 降价房源占比（降价房源 ÷ 在售房源，%）、联邦财政收支最近 12 个月合计（万亿美元，负数为赤字）。',
+    inputs: ['fred_monthly'],
+    fn: (fred_monthly) => {
+      const s = (id) => new Map(fred_monthly.filter((r) => r.series === id).map((r) => [r.date, +r.value]));
+      const back = (date, n) => {
+        const t = +date.slice(0, 4) * 12 + +date.slice(5, 7) - 1 - n;
+        return `${Math.floor(t / 12)}-${String((t % 12) + 1).padStart(2, '0')}-01`;
+      };
+      const cpi = s('CPIAUCSL'), core = s('CPILFESL'), pay = s('PAYEMS'), cut = s('PRIREDCOU13067'), act = s('ACTLISCOU13067'), bal = s('MTSDS133FMS');
+      const out = [];
+      for (const [d, v] of cpi) if (cpi.has(back(d, 12))) out.push({date: d, series: 'cpi_yoy', value: +((v / cpi.get(back(d, 12)) - 1) * 100).toFixed(2)});
+      for (const [d, v] of core) if (core.has(back(d, 12))) out.push({date: d, series: 'core_yoy', value: +((v / core.get(back(d, 12)) - 1) * 100).toFixed(2)});
+      for (const [d, v] of pay) if (pay.has(back(d, 1))) out.push({date: d, series: 'payroll_chg', value: Math.round(v - pay.get(back(d, 1)))});
+      for (const [d, v] of cut) if (act.get(d)) out.push({date: d, series: 'cobb_reduced_share', value: +((v / act.get(d)) * 100).toFixed(1)});
+      for (const [d] of bal) {
+        const year = Array.from({length: 12}, (_, i) => bal.get(back(d, i)));
+        if (year.every((x) => x != null)) out.push({date: d, series: 'balance_12m', value: +(year.reduce((t, x) => t + x, 0) / 1e6).toFixed(3)});
+      }
+      return out;
+    },
+  });
+
+  dash.calc('policy_derived', {
+    title: '利率与政治换算指标',
+    description: '加息定价（3 个月国库券减同一天的联邦基金有效利率，百分点）和经济政策不确定性指数的 7 日平均。',
+    inputs: ['fred_daily', 'fred_policy'],
+    fn: (fred_daily, fred_policy) => {
+      const dff = new Map(fred_daily.filter((r) => r.series === 'DFF').map((r) => [r.date, +r.value]));
+      const out = fred_policy
+        .filter((r) => r.series === 'DGS3MO' && dff.has(r.date))
+        .map((r) => ({date: r.date, series: 'hike_pricing', value: Math.round((r.value - dff.get(r.date)) * 1000) / 1000}));
+      const epu = fred_policy.filter((r) => r.series === 'USEPUINDXD').sort((a, b) => (a.date < b.date ? -1 : 1));
+      for (let i = 6; i < epu.length; i++) {
+        const week = epu.slice(i - 6, i + 1);
+        out.push({date: epu[i].date, series: 'epu7', value: Math.round((week.reduce((t, r) => t + +r.value, 0) / 7) * 10) / 10});
+      }
+      return out.sort((a, b) => (a.date < b.date ? -1 : 1));
+    },
+  });
+
+  dash.calc('wc_yoy', {
+    title: '白领行业就业同比',
+    description: '全国信息业、金融业、电脑系统设计、专业科学技术服务，以及 Atlanta 专业和商业服务、金融业、信息业的就业人数，相对 12 个月前的涨跌（%）。',
+    inputs: ['fred_whitecollar'],
+    fn: (fred_whitecollar) => {
+      const ids = ['USINFO', 'USFIRE', 'CES6054150001', 'CES6054000001', 'ATLA013PBSV', 'ATLA013FIRE', 'ATLA013INFO'];
+      const back = (date) => `${+date.slice(0, 4) - 1}${date.slice(4)}`;
+      const rows = fred_whitecollar.filter((r) => ids.includes(r.series));
+      const idx = new Map(rows.map((r) => [`${r.series}|${r.date}`, +r.value]));
+      return rows
+        .filter((r) => idx.has(`${r.series}|${back(r.date)}`))
+        .map((r) => ({date: r.date, series: r.series, value: +((r.value / idx.get(`${r.series}|${back(r.date)}`) - 1) * 100).toFixed(2)}));
+    },
+  });
+
+  dash.calc('zillow_yoy', {
+    title: 'Zillow 指数同比',
+    description: '30068、30062、30066 的 Zillow 独栋房价指数、联排/公寓房价指数、高价位段房价指数和租金指数，相对 12 个月前的涨跌（%）。',
+    inputs: ['zillow_zip'],
+    fn: (zillow_zip) => {
+      const back = (date) => `${+date.slice(0, 4) - 1}${date.slice(4)}`;
+      const k = (r, date) => `${r.series}|${r.zip}|${date}`;
+      const idx = new Map(zillow_zip.map((r) => [k(r, r.date), +r.value]));
+      return zillow_zip
+        .filter((r) => idx.has(k(r, back(r.date))))
+        .map((r) => ({date: r.date, zip: r.zip, series: r.series, value: +((r.value / idx.get(k(r, back(r.date))) - 1) * 100).toFixed(2)}));
+    },
+  });
+
+  dash.calc('nowcast_next', {
+    title: '下次公布的通胀预测',
+    description: '克利夫兰联储对每个通胀指标还没公布的最近一个月的环比预测（%），按预测日期排列。',
+    inputs: ['infl_nowcast'],
+    fn: (infl_nowcast) => {
+      const done = new Set(infl_nowcast.filter((r) => r.kind === 'actual').map((r) => `${r.measure}|${r.target}`));
+      const open = {};
+      for (const r of infl_nowcast) {
+        if (r.kind === 'nowcast' && !done.has(`${r.measure}|${r.target}`) && !(open[r.measure] <= r.target)) open[r.measure] = r.target;
+      }
+      return infl_nowcast
+        .filter((r) => r.kind === 'nowcast' && r.target === open[r.measure])
+        .map((r) => ({date: r.date, series: r.measure, target: r.target, value: +r.mom}))
+        .sort((a, b) => (a.date < b.date ? -1 : 1));
+    },
+  });
+
+  dash.calc('nowcast_table', {
+    title: '通胀预测与上次实际',
+    description: '每个通胀指标还没公布的最近一个月的最新预测（环比、同比，%），以及上一次公布的实际值和公布前模型的最后一次预测。',
+    inputs: ['infl_nowcast'],
+    fn: (infl_nowcast) => {
+      const pct = (v) => (v == null ? '—' : (+v).toFixed(2) + '%');
+      const month = (t) => `${t.slice(0, 4)} 年 ${+t.slice(5, 7)} 月`;
+      const latest = (rows) => rows.sort((a, b) => (a.date < b.date ? -1 : 1)).pop();
+      return [['cpi', 'CPI'], ['core_cpi', '核心 CPI'], ['pce', 'PCE'], ['core_pce', '核心 PCE']].map(([id, name]) => {
+        const rows = infl_nowcast.filter((r) => r.measure === id);
+        const actual = rows.filter((r) => r.kind === 'actual').sort((a, b) => (a.target < b.target ? -1 : 1));
+        const done = new Set(actual.map((r) => r.target));
+        const nextMonth = rows.filter((r) => r.kind === 'nowcast' && !done.has(r.target)).map((r) => r.target).sort()[0];
+        const next = latest(rows.filter((r) => r.kind === 'nowcast' && r.target === nextMonth));
+        const last = actual.pop();
+        const before = last && latest(rows.filter((r) => r.kind === 'nowcast' && r.target === last.target));
+        return {
+          id, name,
+          month: next ? month(next.target) : '—', mom: pct(next?.mom), yoy: pct(next?.yoy), asof: next ? next.date : '—',
+          last_month: last ? month(last.target) : '—',
+          last_mom: last ? `${pct(last.mom)}（${pct(before?.mom)}）` : '—',
+          last_yoy: pct(last?.yoy),
+        };
+      });
+    },
+  });
+
+  dash.calc('summary', {
+    title: '指标总览',
+    description: '每个指标的最新值、和比较期的变化，以及按固定阈值判断对房价偏支撑还是偏压制。日、周数据和一周前比（Indeed 招聘指数和 Georgia 初请失业金和去年同期比），月度数据和去年同月比，CPI 同比和上个月比。',
+    inputs: ['fred_daily', 'fred_weekly', 'fred_monthly', 'zip_realtor', 'zillow_zip', 'spread', 'monthly_derived', 'fred_policy', 'policy_derived', 'fred_whitecollar', 'indeed_postings', 'nowcast_next'],
+    fn: (fred_daily, fred_weekly, fred_monthly, zip_realtor, zillow_zip, spread, monthly_derived, fred_policy, policy_derived, fred_whitecollar, indeed_postings, nowcast_next) => {
+      const pts = (rows, match, field = 'value') => rows
+        .filter((r) => Object.entries(match).every(([k, v]) => r[k] === v) && r[field] != null)
+        .map((r) => ({date: r.date, v: +r[field]}))
+        .sort((a, b) => (a.date < b.date ? -1 : 1));
+      const back = (date, n) => {
+        const t = +date.slice(0, 4) * 12 + +date.slice(5, 7) - 1 - n;
+        return `${Math.floor(t / 12)}-${String((t % 12) + 1).padStart(2, '0')}-01`;
+      };
+      const num = (v) => Math.round(v).toLocaleString('en-US');
+      const F = {
+        pct2: (v) => v.toFixed(2) + '%', pct1: (v) => v.toFixed(1) + '%', pp: (v) => v.toFixed(2) + ' 个百分点',
+        int: num, usd: (v) => '$' + num(v), days: (v) => num(v) + ' 天', mo: (v) => v.toFixed(1) + ' 个月',
+        idx: (v) => v.toFixed(1), k: (v) => num(v / 1000) + 'k', m: (v) => (v / 1e6).toFixed(2) + 'M',
+        kk: (v) => num(v) + 'k', kM: (v) => (v / 1000).toFixed(2) + 'M', wk: (v) => v.toFixed(1) + ' 周',
+        tn: (v) => (v / 1e6).toFixed(2) + ' 万亿美元', tnv: (v) => v.toFixed(2) + ' 万亿美元',
+      };
+      // change kinds: [relative?, decimals, unit]
+      const C = {pp2: [false, 2, ' 个百分点'], pp1: [false, 1, ' 个百分点'], pct: [true, 1, '%'], mo: [false, 1, ' 个月'], pt1: [false, 1, ' 点'], tn: [false, 2, ' 万亿美元']};
+      const z = (series) => ({zip: '30068', series});
+      const d = (series) => ({series});
+      // [key, group, name, points, latest format, compare, change kind, neutral band, effect: -1 rise pressures prices, +1 rise supports, 0 price itself]
+      const S = [
+        ['mort30', 'daily', '30 年房贷利率（Optimal Blue）', pts(fred_daily, d('OBMMIC30YF')), 'pct2', 'week', 'pp2', 0.05, -1],
+        ['spread', 'daily', '房贷利差（房贷 − 10 年美债）', pts(spread, d('spread')), 'pp', 'week', 'pp2', 0.05, -1],
+        ['dgs10', 'daily', '10 年期美债', pts(fred_daily, d('DGS10')), 'pct2', 'week', 'pp2', 0.05, -1],
+        ['dgs2', 'daily', '2 年期美债（Fed 预期）', pts(fred_daily, d('DGS2')), 'pct2', 'week', 'pp2', 0.05, -1],
+        ['sp500', 'daily', '标普 500', pts(fred_daily, d('SP500')), 'int', 'week', 'pct', 1, 1],
+        ['hy', 'daily', '高收益债利差', pts(fred_daily, d('BAMLH0A0HYM2')), 'pct2', 'week', 'pp2', 0.15, -1],
+        ['fm30', 'weekly', 'Freddie Mac 30 年利率', pts(fred_weekly, d('MORTGAGE30US')), 'pct2', 'week', 'pp2', 0.05, -1],
+        ['fm15', 'weekly', 'Freddie Mac 15 年利率', pts(fred_weekly, d('MORTGAGE15US')), 'pct2', 'week', 'pp2', 0.05, -1],
+        ['icsa', 'weekly', '首次申请失业金', pts(fred_weekly, d('ICSA')), 'k', 'week', 'pct', 5, -1],
+        ['ccsa', 'weekly', '持续申领失业金', pts(fred_weekly, d('CCSA')), 'm', 'week', 'pct', 2, -1],
+        ['cobb_active', 'local', 'Cobb 在售房源', pts(fred_monthly, d('ACTLISCOU13067')), 'int', 'yoy', 'pct', 10, -1],
+        ['cobb_new', 'local', 'Cobb 新挂牌房源', pts(fred_monthly, d('NEWLISCOU13067')), 'int', 'yoy', 'pct', 10, -1],
+        ['cobb_dom', 'local', 'Cobb 上市天数中位数', pts(fred_monthly, d('MEDDAYONMAR13067')), 'days', 'yoy', 'pct', 10, -1],
+        ['cobb_cut', 'local', 'Cobb 降价房源占比', pts(monthly_derived, d('cobb_reduced_share')), 'pct1', 'yoy', 'pp1', 3, -1],
+        ['z_price', 'local', '30068 挂牌价中位数', pts(zip_realtor, {zip: '30068'}, 'median_listing_price'), 'usd', 'yoy', 'pct', 2, 0],
+        ['z_active', 'local', '30068 在售房源', pts(zip_realtor, {zip: '30068'}, 'active_listing_count'), 'int', 'yoy', 'pct', 10, -1],
+        ['z_dom', 'local', '30068 上市天数中位数', pts(zip_realtor, {zip: '30068'}, 'median_days_on_market'), 'days', 'yoy', 'pct', 10, -1],
+        ['z_cut', 'local', '30068 降价房源占比', pts(zip_realtor, {zip: '30068'}, 'price_reduced_share').map((p) => ({...p, v: p.v * 100})), 'pct1', 'yoy', 'pp1', 3, -1],
+        ['zhvi_sfr', 'local', '30068 独栋房价指数（Zillow）', pts(zillow_zip, z('zhvi_sfr')), 'usd', 'yoy', 'pct', 1, 0],
+        ['zhvi_condo', 'local', '30068 联排/公寓房价指数（Zillow）', pts(zillow_zip, z('zhvi_condo')), 'usd', 'yoy', 'pct', 1, 0],
+        ['zhvi_top', 'local', '30068 高价位段房价指数（Zillow 前三分之一）', pts(zillow_zip, z('zhvi_top')), 'usd', 'yoy', 'pct', 1, 0],
+        ['zori', 'local', '30068 租金指数（Zillow）', pts(zillow_zip, z('zori')), 'usd', 'yoy', 'pct', 1, 0],
+        ['cs_atl', 'local', 'Case-Shiller Atlanta', pts(fred_monthly, d('ATXRSA')), 'idx', 'yoy', 'pct', 1, 0],
+        ['unrate', 'macro', '美国失业率', pts(fred_monthly, d('UNRATE')), 'pct1', 'yoy', 'pp1', 0.3, -1],
+        ['atl_ur', 'macro', 'Atlanta 失业率', pts(fred_monthly, d('ATLA013UR')), 'pct1', 'yoy', 'pp1', 0.3, -1],
+        ['cobb_ur', 'macro', 'Cobb 失业率', pts(fred_monthly, d('GACOBB0URN')), 'pct1', 'yoy', 'pp1', 0.3, -1],
+        ['cpi', 'macro', 'CPI 同比', pts(monthly_derived, d('cpi_yoy')), 'pct1', 'prev1', 'pp1', 0.2, -1],
+        ['msacsr', 'macro', '新房库存月数（全国）', pts(fred_monthly, d('MSACSR')), 'mo', 'yoy', 'mo', 0.5, -1],
+        ['houst', 'macro', '新屋开工（全国，千套）', pts(fred_monthly, d('HOUST')), 'int', 'yoy', 'pct', 5, -1],
+        ['exhs', 'macro', '成屋销售（全国，年化）', pts(fred_monthly, d('EXHOSLUSM495S')), 'm', 'yoy', 'pct', 3, 1],
+        ['dgs30', 'policy', '30 年期美债', pts(fred_policy, d('DGS30')), 'pct2', 'week', 'pp2', 0.05, -1],
+        ['tp10', 'policy', '10 年期限溢价（Kim-Wright）', pts(fred_policy, d('THREEFYTP10')), 'pct2', 'week', 'pp2', 0.05, -1],
+        ['real10', 'policy', '10 年实际利率（TIPS）', pts(fred_policy, d('DFII10')), 'pct2', 'week', 'pp2', 0.05, -1],
+        ['be10', 'policy', '10 年通胀预期（breakeven）', pts(fred_policy, d('T10YIE')), 'pct2', 'week', 'pp2', 0.05, 0],
+        ['fwd5y5y', 'policy', '5 年后 5 年通胀预期（5y5y）', pts(fred_policy, d('T5YIFR')), 'pct2', 'week', 'pp2', 0.05, 0],
+        ['bill3m', 'policy', '3 个月国库券', pts(fred_policy, d('DGS3MO')), 'pct2', 'week', 'pp2', 0.05, -1],
+        ['hike', 'policy', '加息定价（3 个月国库券 − 联邦基金）', pts(policy_derived, d('hike_pricing')), 'pp', 'week', 'pp2', 0.05, -1],
+        ['jumbo', 'policy', 'Jumbo 30 年房贷利率', pts(fred_policy, d('OBMMIJUMBO30YF')), 'pct2', 'week', 'pp2', 0.05, -1],
+        ['epu', 'policy', '经济政策不确定性指数（7 日平均）', pts(policy_derived, d('epu7')), 'int', 'week', 'pct', 10, -1],
+        ['vix', 'policy', 'VIX 波动率指数', pts(fred_policy, d('VIXCLS')), 'idx', 'week', 'pt1', 2, -1],
+        ['usd', 'policy', '美元指数（广义）', pts(fred_policy, d('DTWEXBGS')), 'idx', 'week', 'pct', 0.5, 0],
+        ['fed_mbs', 'policy', '美联储持有的 MBS', pts(fred_policy, d('WSHOMCB')), 'tn', 'week', 'pct', 1, 1],
+        ['core_cpi', 'policy', '核心 CPI 同比', pts(monthly_derived, d('core_yoy')), 'pct1', 'prev1', 'pp1', 0.2, -1],
+        ['nc_core_cpi', 'policy', '下次核心 CPI 环比预测（克利夫兰联储）', pts(nowcast_next, d('core_cpi')), 'pct2', 'week', 'pp2', 0.03, -1],
+        ['nc_core_pce', 'policy', '下次核心 PCE 环比预测（克利夫兰联储）', pts(nowcast_next, d('core_pce')), 'pct2', 'week', 'pp2', 0.03, -1],
+        ['balance', 'policy', '联邦财政收支（最近 12 个月）', pts(monthly_derived, d('balance_12m')), 'tnv', 'yoy', 'tn', 0.1, 1],
+        ['ba_ur', 'wc', '本科以上失业率（25 岁以上）', pts(fred_whitecollar, d('LNS14027662')), 'pct1', 'yoy', 'pp1', 0.3, -1],
+        ['mp_ur', 'wc', '管理、专业及相关职业失业率', pts(fred_whitecollar, d('LNU04032215')), 'pct1', 'yoy', 'pp1', 0.3, -1],
+        ['mbf_ur', 'wc', '管理、商业和金融职业失业率', pts(fred_whitecollar, d('LNU04032216')), 'pct1', 'yoy', 'pp1', 0.3, -1],
+        ['pr_ur', 'wc', '专业及相关职业失业率', pts(fred_whitecollar, d('LNU04032217')), 'pct1', 'yoy', 'pp1', 0.3, -1],
+        ['uempmed', 'wc', '失业持续时间中位数', pts(fred_whitecollar, d('UEMPMED')), 'wk', 'yoy', 'pct', 5, -1],
+        ['uemp27', 'wc', '失业 27 周以上人数', pts(fred_whitecollar, d('UEMP27OV')), 'kM', 'yoy', 'pct', 5, -1],
+        ['pbs_quits', 'wc', '专业和商业服务离职率', pts(fred_whitecollar, d('JTS540099QUR')), 'pct1', 'yoy', 'pp1', 0.2, 1],
+        ['pbs_layoff', 'wc', '专业和商业服务裁员率（未季调）', pts(fred_whitecollar, d('JTU540099LDR')), 'pct1', 'yoy', 'pp1', 0.2, -1],
+        ['pbs_open', 'wc', '专业和商业服务职位空缺', pts(fred_whitecollar, d('JTS540099JOL')), 'kk', 'yoy', 'pct', 5, 1],
+        ['info_quits', 'wc', '信息业离职率（未季调）', pts(fred_whitecollar, d('JTU510099QUR')), 'pct1', 'yoy', 'pp1', 0.2, 1],
+        ['info_open', 'wc', '信息业职位空缺（未季调）', pts(fred_whitecollar, d('JTU510099JOL')), 'kk', 'yoy', 'pct', 10, 1],
+        ['usinfo', 'wc', '信息业就业（全国）', pts(fred_whitecollar, d('USINFO')), 'kk', 'yoy', 'pct', 1, 1],
+        ['usfire', 'wc', '金融业就业（全国）', pts(fred_whitecollar, d('USFIRE')), 'kk', 'yoy', 'pct', 1, 1],
+        ['csd', 'wc', '电脑系统设计就业（全国）', pts(fred_whitecollar, d('CES6054150001')), 'kk', 'yoy', 'pct', 1, 1],
+        ['pst', 'wc', '专业、科学和技术服务就业（全国）', pts(fred_whitecollar, d('CES6054000001')), 'kk', 'yoy', 'pct', 1, 1],
+        ['atl_pbs', 'wc', 'Atlanta 专业和商业服务就业', pts(fred_whitecollar, d('ATLA013PBSV')), 'kk', 'yoy', 'pct', 1, 1],
+        ['atl_fire', 'wc', 'Atlanta 金融业就业', pts(fred_whitecollar, d('ATLA013FIRE')), 'kk', 'yoy', 'pct', 1, 1],
+        ['atl_info', 'wc', 'Atlanta 信息业就业', pts(fred_whitecollar, d('ATLA013INFO')), 'kk', 'yoy', 'pct', 1, 1],
+        ['ga_claims', 'wc', 'Georgia 初请失业金（未季调）', pts(fred_whitecollar, d('GAICLAIMS')), 'int', 'yoy52', 'pct', 10, -1],
+        ['nasdaq', 'wc', '纳斯达克综合指数', pts(fred_daily, d('NASDAQCOM')), 'int', 'week', 'pct', 1, 1],
+        ['in_us', 'indeed', '全部职位（全国）', pts(indeed_postings, d('IHLIDXUS')), 'idx', 'yoy52', 'pct', 3, 1],
+        ['in_ga', 'indeed', '全部职位（Georgia）', pts(indeed_postings, d('IHLIDXUSGA')), 'idx', 'yoy52', 'pct', 3, 1],
+        ['in_soft', 'indeed', '软件开发', pts(indeed_postings, d('IHLIDXUSTPSOFTDEVE')), 'idx', 'yoy52', 'pct', 3, 1],
+        ['in_itop', 'indeed', 'IT 运维与技术支持', pts(indeed_postings, d('IHLIDXUSTPITOPHE')), 'idx', 'yoy52', 'pct', 3, 1],
+        ['in_math', 'indeed', '数学与数据', pts(indeed_postings, d('IHLIDXUSTPMATH')), 'idx', 'yoy52', 'pct', 3, 1],
+        ['in_mark', 'indeed', '市场营销', pts(indeed_postings, d('IHLIDXUSTPMARK')), 'idx', 'yoy52', 'pct', 3, 1],
+        ['in_bafi', 'indeed', '银行与金融', pts(indeed_postings, d('IHLIDXUSTPBAFI')), 'idx', 'yoy52', 'pct', 3, 1],
+        ['in_acco', 'indeed', '会计', pts(indeed_postings, d('IHLIDXUSTPACCO')), 'idx', 'yoy52', 'pct', 3, 1],
+        ['in_mana', 'indeed', '管理', pts(indeed_postings, d('IHLIDXUSTPMANA')), 'idx', 'yoy52', 'pct', 3, 1],
+        ['in_pm', 'indeed', '项目管理', pts(indeed_postings, d('IHLIDXUSTPPROJMANA')), 'idx', 'yoy52', 'pct', 3, 1],
+        ['in_lega', 'indeed', '法律', pts(indeed_postings, d('IHLIDXUSTPLEGA')), 'idx', 'yoy52', 'pct', 3, 1],
+        ['in_phsu', 'indeed', '医生', pts(indeed_postings, d('IHLIDXUSTPPHSU')), 'idx', 'yoy52', 'pct', 3, 1],
+      ];
+      return S.map(([key, group, name, p, fmt, cmp, kind, band, effect]) => {
+        const last = p[p.length - 1];
+        if (!last) return {key, group, name, latest: '—', asof: '—', change: '—', period: '', signal: '—', tone: 'flat', value: null, delta: null};
+        const ago = (days) => new Date(Date.parse(last.date) - days * 864e5).toISOString().slice(0, 10);
+        const base = cmp === 'week' || cmp === 'yoy52'
+          ? p.filter((q) => q.date <= ago(cmp === 'week' ? 7 : 365)).pop()
+          : p.find((q) => q.date === back(last.date, cmp === 'yoy' ? 12 : 1));
+        const [rel, dec, unit] = C[kind];
+        const dv = base && base !== last ? (rel ? (last.v / base.v - 1) * 100 : last.v - base.v) : null;
+        let signal = '—', tone = 'flat';
+        if (dv != null) {
+          if (Math.abs(dv) < band) signal = effect ? '中性' : '基本持平';
+          else if (!effect) [signal, tone] = dv > 0 ? ['上涨', 'up'] : ['下跌', 'down'];
+          else [signal, tone] = dv * effect > 0 ? ['偏支撑房价', 'up'] : ['偏压制房价', 'down'];
+        }
+        return {
+          key, group, name, latest: F[fmt](last.v),
+          asof: cmp === 'week' || cmp === 'yoy52' ? last.date : last.date.slice(0, 7),
+          change: dv == null ? '—' : (dv > 0 ? '+' : dv < 0 ? '−' : '') + Math.abs(dv).toFixed(dec) + unit,
+          period: {week: '较一周前', yoy52: '较去年同期', yoy: '同比', prev1: '较上月'}[cmp], signal, tone, value: last.v, delta: dv == null ? null : +dv.toFixed(4),
+        };
+      });
+    },
+  });
+</script>
+
+<script>
+  (() => {
+    const rowOf = (el) => {
+      const g = dash.data(el.dataset.source);
+      if (g.status !== 'ok') return {status: g.status};
+      const where = [...new URLSearchParams(el.dataset.where || '')];
+      return {status: 'ok', row: g.data.find((r) => where.every(([k, v]) => String(r[k]) === v))};
+    };
+    dash.draw('v', (el) => {
+      const {status, row} = rowOf(el);
+      el.classList.toggle('dash-skeleton', status === 'loading');
+      el.textContent = row && row[el.dataset.field] != null ? String(row[el.dataset.field]) : '—';
+    });
+    dash.draw('chip', (el) => {
+      const {status, row} = rowOf(el);
+      el.classList.toggle('dash-skeleton', status === 'loading');
+      el.classList.remove('ec-up', 'ec-down');
+      if (row && row.tone !== 'flat') el.classList.add(row.tone === 'up' ? 'ec-up' : 'ec-down');
+      el.textContent = row && row[el.dataset.field] != null ? String(row[el.dataset.field]) : '—';
+    });
+    dash.draw('tbl', (tb) => {
+      const g = dash.data('summary');
+      tb.replaceChildren();
+      if (g.status !== 'ok') return;
+      for (const r of g.data.filter((x) => x.group === tb.dataset.group)) {
+        const tr = document.createElement('tr');
+        tr.dataset.key = r.key;
+        for (const f of ['name', 'latest', 'asof', 'change', 'period', 'signal']) {
+          const td = document.createElement('td');
+          if (f === 'signal') {
+            const chip = document.createElement('span');
+            chip.className = 'ec-chip' + (r.tone === 'up' ? ' ec-up' : r.tone === 'down' ? ' ec-down' : '');
+            chip.textContent = r[f] ?? '—';
+            td.append(chip);
+          } else td.textContent = r[f] ?? '—';
+          tr.append(td);
+        }
+        tb.append(tr);
+      }
+    });
+    dash.draw('nctbl', (tb) => {
+      const g = dash.data('nowcast_table');
+      tb.replaceChildren();
+      if (g.status !== 'ok') return;
+      for (const r of g.data) {
+        const tr = document.createElement('tr');
+        tr.dataset.key = r.id;
+        for (const f of ['name', 'month', 'mom', 'yoy', 'last_month', 'last_mom', 'last_yoy']) {
+          const td = document.createElement('td');
+          td.textContent = r[f] ?? '—';
+          tr.append(td);
+        }
+        tb.append(tr);
+      }
+    });
+
+    document.querySelectorAll('.ec-nav button').forEach((b) => b.addEventListener('click', () => {
+      const target = document.getElementById(b.dataset.go);
+      if (!target) return;
+      target.scrollIntoView({behavior: 'smooth', block: 'start'});
+      dash.setLink(target.id);
+    }));
+    let linked = false;
+    dash.onData(() => {
+      if (linked) return;
+      linked = true;
+      const named = location.hash && document.getElementById(location.hash.slice(1));
+      if (named) requestAnimationFrame(() => named.scrollIntoView());
+    });
+  })();
+</script>
+
+<script>
+  (() => {
+    const H = 220, TOP = 10, BOTTOM = 24;
+    const parse = d3.utcParse('%Y-%m-%d');
+    const comma = d3.format(',');
+    const F = {
+      pct2: (v) => v.toFixed(2) + '%',
+      pct1: (v) => v.toFixed(1) + '%',
+      spct1: (v) => (v > 0 ? '+' : '') + v.toFixed(1) + '%',
+      pp: (v) => v.toFixed(2),
+      int: (v) => comma(Math.round(v)),
+      usd: (v) => '$' + comma(Math.round(v)),
+      usdk: (v) => '$' + comma(Math.round(v / 1000)) + 'k',
+      k: (v) => comma(Math.round(v / 1000)) + 'k',
+      m: (v) => (v / 1e6).toFixed(2) + 'M',
+      th: (v) => comma(Math.round(v)) + 'k',
+      jobs: (v) => (v > 0 ? '+' : '') + comma(Math.round(v)) + 'k',
+      days: (v) => Math.round(v) + ' 天',
+      mo: (v) => v.toFixed(1),
+      idx: (v) => v.toFixed(1),
+      kk: (v) => comma(Math.round(v)) + 'k',
+      kM: (v) => (v / 1000).toFixed(2) + 'M',
+      wk: (v) => v.toFixed(1),
+      tn: (v) => (v / 1e6).toFixed(2),
+      tnv: (v) => v.toFixed(2),
+    };
+    const s = (series, name, src) => ({name, where: {series}, src});
+    const ZIPS = ['30068', '30062', '30066'];
+    const CHARTS = {
+      rates: {src: 'fred_daily', fmt: 'pct2', lines: [s('OBMMIC30YF', '30年房贷'), s('DGS10', '10年美债'), s('DGS2', '2年美债'), s('DFF', '联邦基金')]},
+      spread: {src: 'spread', fmt: 'pp', lines: [s('spread', '利差')]},
+      sp500: {src: 'fred_daily', fmt: 'int', lines: [s('SP500', '标普500')]},
+      hy: {src: 'fred_daily', fmt: 'pct2', lines: [s('BAMLH0A0HYM2', '利差')]},
+      fm: {src: 'fred_weekly', fmt: 'pct2', lines: [s('MORTGAGE30US', '30年'), s('MORTGAGE15US', '15年')]},
+      icsa: {src: 'fred_weekly', fmt: 'k', lines: [s('ICSA', '初请')]},
+      ccsa: {src: 'fred_weekly', fmt: 'm', lines: [s('CCSA', '持续申领')]},
+      cobbList: {src: 'fred_monthly', monthly: true, fmt: 'int', lines: [s('ACTLISCOU13067', '在售'), s('NEWLISCOU13067', '新挂牌')]},
+      cobbDom: {src: 'fred_monthly', monthly: true, fmt: 'days', lines: [s('MEDDAYONMAR13067', '天数')]},
+      cobbCut: {src: 'monthly_derived', monthly: true, fmt: 'pct1', lines: [s('cobb_reduced_share', '降价占比')]},
+      zipPrice: {src: 'zip_realtor', monthly: true, fmt: 'usdk', lines: ZIPS.map((z) => ({name: z, where: {zip: z}, field: 'median_listing_price'}))},
+      zipActive: {src: 'zip_realtor', monthly: true, fmt: 'int', lines: ZIPS.map((z) => ({name: z, where: {zip: z}, field: 'active_listing_count'}))},
+      zilYoy: {src: 'zillow_yoy', monthly: true, fmt: 'spct1', ref: 0, lines: [{name: '独栋', where: {zip: '30068', series: 'zhvi_sfr'}}, {name: '联排/公寓', where: {zip: '30068', series: 'zhvi_condo'}}]},
+      zori: {src: 'zillow_zip', monthly: true, fmt: 'usd', lines: ZIPS.map((z) => ({name: z, where: {zip: z, series: 'zori'}}))},
+      cs: {src: 'fred_monthly', monthly: true, fmt: 'idx', lines: [s('ATXRSA', 'Atlanta')]},
+      ur: {src: 'fred_monthly', monthly: true, fmt: 'pct1', lines: [s('UNRATE', '美国'), s('ATLA013UR', 'Atlanta'), s('GACOBB0URN', 'Cobb')]},
+      pay: {src: 'monthly_derived', monthly: true, fmt: 'jobs', bars: true, lines: [s('payroll_chg', '新增就业')]},
+      cpi: {src: 'monthly_derived', monthly: true, fmt: 'pct1', ref: 2, lines: [s('cpi_yoy', 'CPI')]},
+      starts: {src: 'fred_monthly', monthly: true, fmt: 'th', lines: [s('HOUST', '开工'), s('PERMIT', '许可')]},
+      msacsr: {src: 'fred_monthly', monthly: true, fmt: 'mo', ref: 6, lines: [s('MSACSR', '月数')]},
+      exhs: {src: 'fred_monthly', monthly: true, fmt: 'm', lines: [s('EXHOSLUSM495S', '成屋销售')]},
+      zilTop: {src: 'zillow_zip', monthly: true, fmt: 'usdk', lines: [{name: '高价位段', where: {zip: '30068', series: 'zhvi_top'}}, {name: '中间价位独栋', where: {zip: '30068', series: 'zhvi_sfr'}}]},
+      long: {src: 'fred_policy', fmt: 'pct2', refs: [5, 6], lines: [s('DGS10', '10年', 'fred_daily'), s('DGS30', '30年')]},
+      decomp: {src: 'fred_policy', fmt: 'pct2', lines: [s('DGS10', '10年名义', 'fred_daily'), s('DFII10', '实际利率'), s('T10YIE', '通胀预期')]},
+      tp: {src: 'fred_policy', fmt: 'pct2', lines: [s('THREEFYTP10', '期限溢价')]},
+      infl: {src: 'fred_policy', fmt: 'pct2', lines: [s('T10YIE', '10年'), s('T5YIFR', '5y5y')]},
+      hike: {src: 'policy_derived', fmt: 'pp', ref: 0, lines: [s('hike_pricing', '加息定价')]},
+      jumbo: {src: 'fred_policy', fmt: 'pct2', lines: [s('OBMMIJUMBO30YF', 'Jumbo'), s('OBMMIC30YF', '普通', 'fred_daily')]},
+      epu: {src: 'policy_derived', fmt: 'int', lines: [s('epu7', '7日平均')]},
+      vix: {src: 'fred_policy', fmt: 'idx', refs: [20, 30], lines: [s('VIXCLS', 'VIX')]},
+      usd: {src: 'fred_policy', fmt: 'idx', lines: [s('DTWEXBGS', '美元')]},
+      mbs: {src: 'fred_policy', fmt: 'tn', days: 365, lines: [s('WSHOMCB', 'MBS')]},
+      core: {src: 'monthly_derived', monthly: true, fmt: 'pct1', ref: 2, lines: [s('core_yoy', '核心'), s('cpi_yoy', '整体')]},
+      deficit: {src: 'monthly_derived', monthly: true, fmt: 'tnv', ref: 0, lines: [s('balance_12m', '收支')]},
+      wcUr: {src: 'fred_whitecollar', monthly: true, fmt: 'pct1', lines: [s('UNRATE', '全体', 'fred_monthly'), s('LNS14027662', '本科以上'), s('LNU04032216', '管理商业金融'), s('LNU04032217', '专业类')]},
+      wcDur: {src: 'fred_whitecollar', monthly: true, fmt: 'wk', lines: [s('UEMPMED', '周数')]},
+      wcLong: {src: 'fred_whitecollar', monthly: true, fmt: 'kM', lines: [s('UEMP27OV', '27周以上')]},
+      wcQuits: {src: 'fred_whitecollar', monthly: true, fmt: 'pct1', lines: [s('JTS540099QUR', '专业商业服务'), s('JTU510099QUR', '信息业')]},
+      wcOpen: {src: 'fred_whitecollar', monthly: true, fmt: 'kk', lines: [s('JTS540099JOL', '专业商业服务'), s('JTU510099JOL', '信息业')]},
+      wcEmp: {src: 'wc_yoy', monthly: true, fmt: 'spct1', ref: 0, lines: [s('USINFO', '信息'), s('USFIRE', '金融'), s('CES6054150001', '电脑系统设计'), s('CES6054000001', '专业技术')]},
+      wcAtl: {src: 'wc_yoy', monthly: true, fmt: 'spct1', ref: 0, lines: [s('ATLA013PBSV', '专业商业服务'), s('ATLA013FIRE', '金融'), s('ATLA013INFO', '信息')]},
+      inAi: {src: 'indeed_postings', fmt: 'idx', days: 365, ref: 100, lines: [s('IHLIDXUSTPSOFTDEVE', '软件开发'), s('IHLIDXUSTPITOPHE', 'IT运维'), s('IHLIDXUSTPMATH', '数学数据'), s('IHLIDXUSTPMARK', '市场营销')]},
+      inSafe: {src: 'indeed_postings', fmt: 'idx', days: 365, ref: 100, lines: [s('IHLIDXUSTPBAFI', '银行金融'), s('IHLIDXUSTPACCO', '会计'), s('IHLIDXUSTPPROJMANA', '项目管理'), s('IHLIDXUSTPLEGA', '法律'), s('IHLIDXUSTPPHSU', '医生')]},
+      inGa: {src: 'indeed_postings', fmt: 'idx', days: 365, ref: 100, lines: [s('IHLIDXUSGA', 'Georgia'), s('IHLIDXUS', '全国')]},
+      gaClaims: {src: 'fred_whitecollar', fmt: 'int', days: 365, lines: [s('GAICLAIMS', '初请')]},
+      nasdaq: {src: 'fred_daily', fmt: 'int', lines: [s('NASDAQCOM', '纳斯达克')]},
+    };
+
+    const message = (el, cls, text) => {
+      const p = document.createElement('div');
+      p.className = cls;
+      p.textContent = text;
+      el.append(p);
+    };
+
+    function draw(el, key) {
+      const cfg = CHARTS[key];
+      const got = new Map([...new Set(cfg.lines.map((l) => l.src || cfg.src))].map((id) => [id, dash.data(id)]));
+      const states = [...got.values()].map((g) => g.status);
+      el.replaceChildren();
+      el.classList.toggle('dash-skeleton', states.includes('loading'));
+      if (states.includes('error')) return message(el, 'ec-fail', '加载失败');
+      if (states.some((st) => st !== 'ok')) return;
+      const lines = cfg.lines.map((l, i) => ({
+        name: l.name,
+        color: dash.colors[i % dash.colors.length],
+        pts: got.get(l.src || cfg.src).data
+          .filter((r) => Object.entries(l.where).every(([k, v]) => r[k] === v))
+          .map((r) => ({d: parse(r.date), v: r[l.field || 'value']}))
+          .filter((p) => p.d && p.v != null && Number.isFinite(+p.v))
+          .map((p) => ({d: p.d, v: +p.v}))
+          .sort((a, b) => a.d - b.d),
+      })).filter((l) => l.pts.length);
+      if (!lines.length) return message(el, 'ec-empty', '暂无数据');
+      if (cfg.monthly || cfg.days) {
+        const end = d3.max(lines, (l) => l.pts[l.pts.length - 1].d);
+        const from = cfg.monthly ? d3.utcMonth.offset(end, -23) : d3.utcDay.offset(end, -cfg.days);
+        lines.forEach((l) => { l.pts = l.pts.filter((p) => p.d >= from); });
+      }
+      const refs = cfg.refs || (cfg.ref != null ? [cfg.ref] : []);
+      const W = el.clientWidth;
+      if (!W) return;
+      const fmt = F[cfg.fmt];
+      const single = lines.length === 1;
+      const last = (l) => l.pts[l.pts.length - 1];
+      const svg = d3.select(el).append('svg').attr('class', 'ec-svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img');
+      const measure = (texts) => {
+        const t = svg.append('g').selectAll('text').data(texts).join('text').text((d) => d);
+        const w = d3.max(t.nodes(), (n) => n.getComputedTextLength()) || 0;
+        t.remove();
+        return w;
+      };
+
+      const all = lines.flatMap((l) => l.pts);
+      const vals = all.map((p) => p.v).concat(refs, cfg.bars ? [0] : []);
+      const [lo, hi] = d3.extent(vals);
+      const pad = (hi - lo) * 0.08 || Math.abs(hi) * 0.02 || 1;
+      const y = d3.scaleLinear([cfg.bars && lo >= 0 ? 0 : lo - pad, hi + pad], [H - BOTTOM, TOP]).nice(4);
+      const yt = y.ticks(4);
+      const ml = measure(yt.map(fmt)) + 10;
+      const fullEnd = (l) => (single ? fmt(last(l).v) : `${l.name} ${fmt(last(l).v)}`);
+      let endText = fullEnd;
+      let mr = cfg.bars ? 8 : measure(lines.map(fullEnd)) + 14;
+      if (mr > W * 0.4) {
+        endText = (l) => fmt(last(l).v);
+        mr = measure(lines.map(endText)) + 14;
+      }
+      const x0 = ml, x1 = W - mr;
+      const dates = [...new Set(all.map((p) => +p.d))].sort((a, b) => a - b).map((t) => new Date(t));
+      const band = cfg.bars ? d3.scaleBand(dates.map((d) => +d), [x0, x1]).padding(0.3) : null;
+      const time = d3.scaleUtc(d3.extent(dates), [x0, x1]);
+      const X = (d) => (band ? band(+d) + band.bandwidth() / 2 : time(d));
+
+      if (cfg.monthly && dates.length > 2) {
+        const a = dates[dates.length - 2];
+        const left = band ? band(+a) - (band.step() * band.paddingInner()) / 2 : (X(dates[dates.length - 3]) + X(a)) / 2;
+        svg.append('rect').attr('class', 'ec-shade').attr('x', left).attr('y', TOP).attr('width', Math.max(0, x1 - left)).attr('height', H - BOTTOM - TOP);
+      } else if (!cfg.monthly && dates.length > 1) {
+        const left = Math.max(x0, time(d3.utcDay.offset(dates[dates.length - 1], -7)));
+        svg.append('rect').attr('class', 'ec-shade').attr('x', left).attr('y', TOP).attr('width', Math.max(0, x1 - left)).attr('height', H - BOTTOM - TOP);
+      }
+      svg.append('g').selectAll('line').data(yt).join('line').attr('class', 'ec-gridline')
+        .attr('x1', x0).attr('x2', x1).attr('y1', (v) => y(v)).attr('y2', (v) => y(v));
+      svg.append('g').selectAll('text').data(yt).join('text').attr('class', 'ec-tick')
+        .attr('x', x0 - 8).attr('y', (v) => y(v)).attr('dy', '0.32em').attr('text-anchor', 'end').text(fmt);
+      svg.append('line').attr('class', 'ec-axis').attr('x1', x0).attr('x2', x1).attr('y1', H - BOTTOM).attr('y2', H - BOTTOM);
+
+      const n = Math.max(2, Math.floor((x1 - x0) / 84));
+      let xt;
+      if (cfg.monthly) {
+        const step = Math.ceil(dates.length / n);
+        xt = dates.filter((d, i) => (dates.length - 1 - i) % step === 0);
+      } else xt = time.ticks(n);
+      const xfmt = cfg.monthly || cfg.days > 120 ? d3.utcFormat('%y年%-m月') : d3.utcFormat('%-m/%-d');
+      const xg = svg.append('g');
+      let right = -Infinity;
+      for (const d of xt) {
+        const t = xg.append('text').attr('class', 'ec-tick').attr('y', H - 6).attr('text-anchor', 'middle').text(xfmt(d));
+        const w = t.node().getComputedTextLength();
+        const cx = Math.min(Math.max(X(d), w / 2), W - w / 2);
+        if (cx - w / 2 < right + 8) { t.remove(); continue; }
+        t.attr('x', cx);
+        right = cx + w / 2;
+      }
+      for (const r of refs) svg.append('line').attr('class', 'ec-ref').attr('x1', x0).attr('x2', x1).attr('y1', y(r)).attr('y2', y(r));
+
+      if (band) {
+        const l = lines[0];
+        const bw = Math.min(32, band.bandwidth());
+        svg.append('g').selectAll('rect').data(l.pts).join('rect')
+          .attr('x', (p) => X(p.d) - bw / 2).attr('width', bw)
+          .attr('y', (p) => Math.min(y(p.v), y(0))).attr('height', (p) => Math.abs(y(p.v) - y(0)))
+          .attr('rx', Math.min(3, bw / 2))
+          .style('fill', (p) => (p.v < 0 ? 'var(--cds-chart-status-critical)' : l.color));
+        svg.append('line').attr('class', 'ec-axis').attr('x1', x0).attr('x2', x1).attr('y1', y(0)).attr('y2', y(0));
+      } else {
+        if (single) {
+          const id = `ec-grad-${key}`;
+          const grad = svg.append('defs').append('linearGradient').attr('id', id).attr('x1', 0).attr('x2', 0).attr('y1', 0).attr('y2', 1);
+          [[0, 0.26], [0.25, 0.16], [0.5, 0.08], [0.75, 0.03], [1, 0]].forEach(([o, a]) =>
+            grad.append('stop').attr('offset', o).attr('style', `stop-color:${lines[0].color};stop-opacity:${a}`));
+          svg.append('path').datum(lines[0].pts).attr('fill', `url(#${id})`)
+            .attr('d', d3.area().x((p) => X(p.d)).y0(H - BOTTOM).y1((p) => y(p.v)));
+        }
+        for (const l of lines) {
+          svg.append('path').datum(l.pts).attr('class', 'ec-line').style('stroke', l.color)
+            .attr('d', d3.line().x((p) => X(p.d)).y((p) => y(p.v)));
+          svg.append('circle').attr('cx', X(last(l).d)).attr('cy', y(last(l).v)).attr('r', 3).style('fill', l.color);
+        }
+        const labs = lines.map((l) => ({l, y: y(last(l).v)})).sort((a, b) => a.y - b.y);
+        for (let i = 1; i < labs.length; i++) labs[i].y = Math.max(labs[i].y, labs[i - 1].y + 14);
+        const over = labs[labs.length - 1].y - (H - BOTTOM);
+        if (over > 0) labs.forEach((a) => { a.y -= over; });
+        labs.forEach((a) => { a.y = Math.max(a.y, TOP); });
+        for (const a of labs) {
+          svg.append('text').attr('class', 'ec-end').attr('x', x1 + 8).attr('y', a.y).attr('dy', '0.32em').text(endText(a.l));
+        }
+      }
+
+      const tip = document.createElement('div');
+      tip.className = 'ec-tip';
+      tip.hidden = true;
+      el.append(tip);
+      const rule = svg.append('line').attr('class', 'ec-rule').attr('y1', TOP).attr('y2', H - BOTTOM).style('visibility', 'hidden');
+      const dots = svg.append('g');
+      const tfmt = cfg.monthly ? d3.utcFormat('%Y年%-m月') : d3.utcFormat('%Y-%m-%d');
+      const hide = () => { tip.hidden = true; rule.style('visibility', 'hidden'); dots.selectAll('*').remove(); };
+      svg.append('rect').attr('x', x0).attr('y', 0).attr('width', Math.max(0, x1 - x0)).attr('height', H).attr('fill', 'transparent')
+        .on('pointermove', (event) => {
+          const [mx] = d3.pointer(event, svg.node());
+          const d = d3.least(dates, (t) => Math.abs(X(t) - mx));
+          const hits = lines.map((l) => ({l, p: l.pts.find((p) => +p.d === +d)})).filter((h) => h.p);
+          rule.attr('x1', X(d)).attr('x2', X(d)).style('visibility', 'visible');
+          dots.selectAll('circle').data(band ? [] : hits).join('circle').attr('r', 4)
+            .attr('cx', X(d)).attr('cy', (h) => y(h.p.v)).style('fill', (h) => h.l.color);
+          const head = document.createElement('div');
+          head.className = 'ec-tip-date';
+          head.textContent = tfmt(d);
+          const rows = hits.map((h) => {
+            const row = document.createElement('div');
+            row.className = 'ec-tip-row';
+            if (!single) {
+              const sw = document.createElement('span');
+              sw.className = 'ec-sw';
+              sw.style.background = h.l.color;
+              const name = document.createElement('span');
+              name.textContent = h.l.name;
+              row.append(sw, name);
+            }
+            const val = document.createElement('b');
+            val.textContent = fmt(h.p.v);
+            row.append(val);
+            return row;
+          });
+          tip.replaceChildren(head, ...rows);
+          tip.hidden = false;
+          const scale = el.clientWidth / W;
+          const px = X(d) * scale;
+          const tw = tip.offsetWidth;
+          tip.style.left = `${px + 12 + tw > el.clientWidth ? Math.max(0, px - 12 - tw) : px + 12}px`;
+        })
+        .on('pointerleave', hide);
+    }
+
+    dash.draw('chart', (el) => {
+      if (CHARTS[el.dataset.chart]) draw(el, el.dataset.chart);
+    });
+  })();
+</script>

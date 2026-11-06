@@ -1,0 +1,20 @@
+{
+  "rdc_modified": "Wed, 04 Nov 2026 16:56:59 GMT",
+  "zillow_modified": {
+    "zhvi_sfr": "Fri, 16 Oct 2026 01:55:18 GMT",
+    "zhvi_condo": "Fri, 16 Oct 2026 01:54:58 GMT",
+    "zori": "Fri, 16 Oct 2026 01:56:21 GMT",
+    "zhvi_top": "Fri, 16 Oct 2026 01:55:50 GMT"
+  },
+  "hashes": {
+    "fred_daily": "d15a547e018a4af6a2eb2330f01e82389764d7b6be7d5b37f8a77128ffe3cfc1",
+    "fred_weekly": "5bdee2a42545680114d163c04a1ae0dc4bfe90de7762df4641cf82f26d4bd9d1",
+    "fred_monthly": "66365ad7b03b5c97bc80bd217958681165f7e5108c5759ebad1738c0c727cedf",
+    "zip_realtor": "99ee19acbd7f1b95f0c3ad98a12528027b24c646ea1851fad50283cff9d227b9",
+    "zillow_zip": "e5026e486b7db0a28d86c3f95444e20cc4d36c57faa5e27c26eb10c668d6b0d7",
+    "fred_policy": "f395e20a6d6152bfeddede4e70775c536ec196f2eab262bdcd98d379b9059759",
+    "fred_whitecollar": "11d1e07ed414f590c7ae2e5cbf1aabd7cb2266972a09192155c79e6cc5e1e798",
+    "indeed_postings": "c6b3847843e70f05d7a29af6b75fa9487e2fa721e45af7d2d0e7d3d03d8e19b6",
+    "infl_nowcast": "adec1aaf2244f87258e13baccea963528e686b1b85a7203d53e8b9ff9c39f7ef"
+  }
+}

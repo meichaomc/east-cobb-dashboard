@@ -1,0 +1,12 @@
+{
+  "run_at": "2026-11-06T09:02:04-05:00",
+  "changed": [
+    "fred_daily",
+    "fred_weekly",
+    "fred_monthly",
+    "fred_policy",
+    "fred_whitecollar",
+    "indeed_postings"
+  ],
+  "failed": {}
+}
