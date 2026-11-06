@@ -1,12 +1,14 @@
 {
-  "run_at": "2026-11-06T09:02:04-05:00",
+  "run_at": "2026-11-06T20:08:07+00:00",
   "changed": [
-    "fred_daily",
-    "fred_weekly",
-    "fred_monthly",
-    "fred_policy",
-    "fred_whitecollar",
-    "indeed_postings"
+    "infl_nowcast"
   ],
-  "failed": {}
+  "failed": {
+    "fred_daily": "TimeoutError: The read operation timed out",
+    "fred_weekly": "TimeoutError: The read operation timed out",
+    "fred_monthly": "TimeoutError: The read operation timed out",
+    "fred_policy": "TimeoutError: The read operation timed out",
+    "fred_whitecollar": "TimeoutError: The read operation timed out",
+    "indeed_postings": "TimeoutError: The read operation timed out"
+  }
 }
