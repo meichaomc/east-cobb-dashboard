@@ -30,6 +30,8 @@ jobs:
 
       - name: Download data
         run: python fetch_data.py
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
 
       - name: Commit changed data
         run: |
@@ -50,3 +52,7 @@ jobs:
 
       - id: deploy
         uses: actions/deploy-pages@v4
+
+      - name: Fail the run if a data source failed
+        run: |
+          python -c "import json, sys; f = json.load(open('data/changed.json'))['failed']; print(f or 'all sources ok'); sys.exit(1 if f else 0)"

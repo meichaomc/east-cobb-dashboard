@@ -11,7 +11,11 @@ import datetime as dt
 import hashlib
 import io
 import json
+import os
 import sys
+import time
+import urllib.error
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
@@ -25,6 +29,8 @@ MONTHS_KEPT = 37  # 24 months shown, plus 13 more so year-over-year changes have
 DAYS_KEPT = 430   # daily/weekly series compared year over year: a year plus a margin
 
 FRED_CSV = "https://fred.stlouisfed.org/graph/fredgraph.csv?id={id}&cosd={start}"
+FRED_API = "https://api.stlouisfed.org/fred/series/observations"
+FRED_API_KEY = os.environ.get("FRED_API_KEY", "")
 FRED_DAILY = ["OBMMIC30YF", "DGS10", "DGS2", "DFF", "BAMLH0A0HYM2", "SP500", "NASDAQCOM"]
 FRED_WEEKLY = ["MORTGAGE30US", "MORTGAGE15US", "ICSA", "CCSA"]
 FRED_MONTHLY = [
@@ -105,15 +111,31 @@ def two_months_back(today):
             continue
 
 
-def fred_rows(series, start):
+def fred_points(series, start):
+    """(date, value text) pairs. fred.stlouisfed.org refuses cloud servers such as GitHub Actions,
+    so when FRED_API_KEY is set this uses FRED's official API instead of the public CSV link."""
+    if FRED_API_KEY:
+        query = urllib.parse.urlencode({"series_id": series, "observation_start": start.isoformat(), "file_type": "json", "api_key": FRED_API_KEY})
+        for attempt in range(3):
+            try:
+                with open_url(f"{FRED_API}?{query}") as r:
+                    return [(o["date"], o["value"]) for o in json.load(r)["observations"]]
+            except urllib.error.HTTPError as e:  # its message holds no URL, so the key stays out of the report
+                if e.code != 429 and e.code < 500 or attempt == 2:
+                    raise RuntimeError(f"FRED API returned HTTP {e.code} for {series}") from None
+                time.sleep(20)
     with open_url(FRED_CSV.format(id=series, start=start.isoformat())) as r:
         reader = csv.reader(io.TextIOWrapper(r, encoding="utf-8"))
         next(reader)
-        rows = []
-        for date, value in reader:
-            if value in ("", "."):
-                continue
-            rows.append({"date": date, "series": series, "value": round(float(value), 4)})
+        return list(reader)
+
+
+def fred_rows(series, start):
+    rows = []
+    for date, value in fred_points(series, start):
+        if value in ("", "."):
+            continue
+        rows.append({"date": date, "series": series, "value": round(float(value), 4)})
     if not rows:
         raise RuntimeError(f"FRED returned no rows for {series}")
     return rows
