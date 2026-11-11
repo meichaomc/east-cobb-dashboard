@@ -7,14 +7,14 @@
     "zhvi_top": "Fri, 16 Oct 2026 01:55:50 GMT"
   },
   "hashes": {
-    "fred_daily": "7004135253d8c8414beda22effe5307cc310f73c00f20fbbf63ef34a9e4f069f",
-    "fred_weekly": "5bdee2a42545680114d163c04a1ae0dc4bfe90de7762df4641cf82f26d4bd9d1",
+    "fred_daily": "e13279c99be6739035f90f23f6fa5a81dccffc7b10e85ebe69bc866a19cee0af",
+    "fred_weekly": "ea47fdf8ccaac9f6c503352868abc1d3614c09524060ea461c0673679b69e1c0",
     "fred_monthly": "b700d0569dafc289418e6d6b1aa830ebf42c3865123a1ad7eabe1ab7181ec68c",
     "zip_realtor": "99ee19acbd7f1b95f0c3ad98a12528027b24c646ea1851fad50283cff9d227b9",
     "zillow_zip": "e5026e486b7db0a28d86c3f95444e20cc4d36c57faa5e27c26eb10c668d6b0d7",
-    "fred_policy": "57a818a6ca04f98ecd15c547eaf2f94c368b42d6d8f099c498986751c8ad1bc0",
-    "fred_whitecollar": "778c4164e17d115477d601b9e419f4c6816389856c4c3ea258010cbdca1bcaf5",
-    "indeed_postings": "b4b644b47ad2edd2bc6ddb26bece0eaa5922162177cc50a8737f71e1442a8ee9",
+    "fred_policy": "f4e238d0255fa1b0395b0bb1872c570012f2ab93080ad955f6cdfda8156b12b0",
+    "fred_whitecollar": "205fb7de038f493643f7a6df822128b42406ec3ff92a83eb36e24f0de62b352c",
+    "indeed_postings": "cf8494bd779284377cad609221c86ea7064e325cc154c9880256bfcdb08d9c85",
     "infl_nowcast": "aeb48f327887b62b5600ca51de53baae16bbe10b91bde2e8bd0344e615ac9324"
   }
 }
