@@ -1,12 +1,10 @@
 {
-  "run_at": "2026-11-16T22:43:37+00:00",
+  "run_at": "2026-11-17T21:30:01+00:00",
   "changed": [
     "fred_daily",
     "fred_policy",
-    "fred_whitecollar",
     "indeed_postings",
-    "infl_nowcast",
-    "zillow_zip"
+    "infl_nowcast"
   ],
   "failed": {}
 }
