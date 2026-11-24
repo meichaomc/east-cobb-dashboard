@@ -1,9 +1,9 @@
 {
-  "run_at": "2026-11-24T00:34:20+00:00",
+  "run_at": "2026-11-24T22:54:04+00:00",
   "changed": [
     "fred_daily",
+    "fred_monthly",
     "fred_policy",
-    "indeed_postings",
     "infl_nowcast"
   ],
   "failed": {}
